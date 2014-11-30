@@ -11,7 +11,7 @@ clean:
 	-rm raytracer
 
 run:
-	make && ./raytracer && feh view1.bmp
+	make && ./raytracer && feh view1.bmp view2.bmp
 	
 gitclean:
 	git clean -f && git reset --hard HEAD && git pull
