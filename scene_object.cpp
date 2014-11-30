@@ -37,13 +37,16 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	//backface cull; modify this if necessary
 	if(ray.origin.m_data[2] * ray.dir.m_data[2] > 0) return false;
 
-	double scale_factor = ray.origin.m_data[2]/ray.dir.m_data[2];
+	double scale_factor = -ray.origin.m_data[2]/ray.dir.m_data[2];
 	Vector3D scaled_dir = scale_factor*ray.dir;
 	Point3D POI = ray.origin + scaled_dir;
+
 	if(std::abs(POI.m_data[0]) > 0.5 || std::abs(POI.m_data[1]) > 0.5) return false; //make sure it's not outside the bounds
 
 	ray.intersection.point = modelToWorld * POI;
+
 	std::cout << ray.intersection.point << std::endl;
+
 	ray.intersection.none = false;
 	Colour col(1.0, 0.0, 0.0);
 	ray.col = col;

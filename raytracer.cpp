@@ -254,7 +254,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 			imagePlane[2] = -1;
 
 			// TODO: Convert ray to world space and call 
-			// shadeRay(ray) to generate pixel colour. 	
+			// shadeRay(ray) to generate pixel colour. 
 			
 			Ray3D ray(origin, imagePlane - origin);
 			ray.dir = viewToWorld * ray.dir;
@@ -325,6 +325,8 @@ int main(int argc, char* argv[])
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
 	raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
+
+	std::cout << "Here\n";
 	
 	// Render it from a different point of view.
 	Point3D eye2(4, 2, 1);
