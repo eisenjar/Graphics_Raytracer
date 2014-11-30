@@ -36,6 +36,10 @@ Point3D& Point3D::operator =(const Point3D& other) {
 	return *this;
 }
 
+double distance (const Point3D & a, const Point3D & b) {
+	return std::sqrt(std::pow(a.m_data[0] - b.m_data[0], 2) + std::pow(a.m_data[1] - b.m_data[1], 2) + std::pow(a.m_data[2] - b.m_data[2], 2));
+}
+
 double& Point3D::operator[](int i) {
 	return m_data[i];
 }

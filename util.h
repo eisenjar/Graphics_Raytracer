@@ -34,6 +34,8 @@ public:
 	double m_data[3];
 };
 
+double distance(const Point3D & a, const Point3D & b);
+
 class Vector3D {
 public:
 	Vector3D(); 

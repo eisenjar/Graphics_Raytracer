@@ -40,16 +40,20 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	if(std::abs(POI.m_data[0]) > 0.5 || std::abs(POI.m_data[1]) > 0.5) return false; //make sure it's not outside the bounds
 
-	ray.intersection.point = modelToWorld * POI;
 
-	ray.intersection.none = false;
-	Colour col(1.0, 0.0, 0.0);
-	ray.col = col;
+	if(ray.intersection.none == true || distance(ray.intersection.point, ray.origin) > distance(modelToWorld * POI, ray.origin)) {
+		ray.intersection.point = modelToWorld * POI;
 
-	ray.intersection.normal = transNorm(worldToModel,normal);
-	ray.intersection.normal.normalize();
+		ray.intersection.none = false;
+		Colour col(1.0, 0.0, 0.0);
+		ray.col = col;
 
-	return true;
+		ray.intersection.normal = transNorm(worldToModel,normal);
+		ray.intersection.normal.normalize();
+
+		return true;
+	}
+	else return false;
 }
 
 bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
@@ -80,17 +84,22 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	if(d!=d)
 	{
 
-	ray.dir = modelToWorld * ray.dir;
-	ray.origin = original_origin;
+		ray.dir = modelToWorld * ray.dir;
+		ray.origin = original_origin;
 		return false;
 	}
-	ray.intersection.point = ray.origin + d * ray.dir;
-	ray.intersection.none = false;
 
-//	std::cout << ray.intersection.point << std::endl;
+	Point3D temp = modelToWorld * (ray.origin + d * ray.dir);
 
-	Colour col(1.0, 1.0, 1.0);
-	ray.col = col;
+	if(ray.intersection.none == true || distance(ray.intersection.point, original_origin) > distance(modelToWorld * temp, original_origin)) {
+		ray.intersection.point = temp;
+		ray.intersection.none = false;
+
+	//	std::cout << ray.intersection.point << std::endl;
+
+		Colour col(1.0, 1.0, 1.0);
+		ray.col = col;
+	}
 
 	ray.dir = modelToWorld * ray.dir;
 	ray.origin = original_origin;
