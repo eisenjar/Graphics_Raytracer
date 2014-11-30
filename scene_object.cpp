@@ -28,6 +28,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	//not sure if this is right
 	Point3D original_origin = ray.origin;
+	Vector3D normal(0,0,1);
 	
 	//ray.origin.m_data[2] = 1.0;
 	ray.origin = worldToModel * ray.origin;
@@ -44,14 +45,10 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	ray.intersection.point = modelToWorld * POI;
 	ray.intersection.none = false;
 	Colour col(1.0, 0.0, 0.0);
-	std::cout << "POI: " << ray.intersection.point << std::endl;
 	ray.col = col;
-
-	//_worldToModel = node->trans*_worldToModel;
-	//_modelToWorld = _modelToWorld*node->invtrans;
 	ray.dir = modelToWorld * ray.dir;
-	ray.origin = original_origin;
-	
+	ray.origin = original_origin;	
+	ray.intersection.normal = transNorm(worldToModel,normal);
 
 	return true;
 }
