@@ -53,6 +53,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	ray.dir = modelToWorld * ray.dir;
 	ray.origin = original_origin;	
 	ray.intersection.normal = transNorm(worldToModel,normal);
+	ray.intersection.normal.normalize();
 
 	return true;
 }
