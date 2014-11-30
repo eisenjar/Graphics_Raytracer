@@ -13,6 +13,7 @@ clean:
 run:
 	make && ./raytracer && feh view1.bmp
 	
-
+gitclean:
+	git clean -f && git reset -hard origin/master && git pull origin/master
 
 
