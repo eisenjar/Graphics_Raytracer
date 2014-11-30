@@ -326,7 +326,7 @@ int main(int argc, char* argv[])
 	// testing purposes.	
 	raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
 
-	std::cout << "Here\n";
+	//std::cout << "Here\n";
 	
 	// Render it from a different point of view.
 	Point3D eye2(4, 2, 1);
