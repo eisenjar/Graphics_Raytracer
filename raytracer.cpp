@@ -191,6 +191,7 @@ void Raytracer::computeShading( Ray3D& ray ) {
 		curLight->light->shade(ray);
 		curLight = curLight->next;
 	}
+
 }
 
 void Raytracer::initPixelBuffer() {
@@ -255,7 +256,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 			// TODO: Convert ray to world space and call 
 			// shadeRay(ray) to generate pixel colour. 	
 			
-			Ray3D ray;
+			Ray3D ray(origin, imagePlane - origin);
 
 			Colour col = shadeRay(ray); 
 

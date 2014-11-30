@@ -25,23 +25,33 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	//
 	// HINT: Remember to first transform the ray into object space  
 	// to simplify the intersection test.
-	//_modelToWorld = _modelToWorld*node->trans;
-	//_worldToModel = node->invtrans*_worldToModel;
+
+	//not sure if this is right
+	ray.origin.m_data[2] = 1.0;
+
+	ray.dir = worldToModel * ray.dir;
 	
 	//backface cull; modify this if necessary
-	if(ray.origin.m_data[2] * ray.dir.m_data[2] >= 0) return false;
+	std::cout << "Origin z: " << ray.origin.m_data[2] << ", Ray direction: " << ray.dir.m_data[0] << ", " << ray.dir.m_data[1] << ", " << ray.dir.m_data[2] << std::endl;
+	if(ray.origin.m_data[2] * ray.dir.m_data[2] > 0) return false;
 
 	double scale_factor = ray.origin.m_data[2]/ray.dir.m_data[2];
 	Vector3D scaled_dir = scale_factor*ray.dir;
 	Point3D POI = ray.origin + scaled_dir;
+	if(std::abs(POI.m_data[0]) > 0.5 || std::abs(POI.m_data[1]) > 0.5) return false; //make sure it's not outside the bounds
 
 	ray.intersection.point = POI;
+	ray.intersection.none = false;
+	Colour col(1.0, 0.0, 0.0);
+	std::cout << "POI: " << POI << std::endl;
+	ray.col = col;
 
 	//_worldToModel = node->trans*_worldToModel;
 	//_modelToWorld = _modelToWorld*node->invtrans;
+	ray.dir = modelToWorld * ray.dir;
 	
 
-	return false;
+	return true;
 }
 
 bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
