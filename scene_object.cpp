@@ -45,8 +45,6 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	ray.intersection.point = modelToWorld * POI;
 
-	std::cout << ray.intersection.point << std::endl;
-
 	ray.intersection.none = false;
 	Colour col(1.0, 0.0, 0.0);
 	ray.col = col;
@@ -72,13 +70,34 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	//not sure if this is right
 	Point3D original_origin = ray.origin;
-	
+
 	ray.origin = worldToModel * ray.origin;
 	ray.dir = worldToModel * ray.dir;
 
+	Point3D origin(0,0,0);
+	Vector3D o_vec = ray.origin - origin;
+	Vector3D d_vec = ray.dir;
+
+	double d = (-(d_vec.dot(o_vec)) + std::sqrt( std::pow(d_vec.dot(o_vec),2) - d_vec.dot(d_vec) * ( o_vec.dot(o_vec) - 1)))/(d_vec.dot(d_vec));
+	
+	//This is true if d is NaN 
+	if(d!=d)
+	{
+
 	ray.dir = modelToWorld * ray.dir;
 	ray.origin = original_origin;
-	
+		return false;
+	}
+	ray.intersection.point = ray.origin + d * ray.dir;
+	ray.intersection.none = false;
+
+//	std::cout << ray.intersection.point << std::endl;
+
+	Colour col(1.0, 1.0, 1.0);
+	ray.col = col;
+
+	ray.dir = modelToWorld * ray.dir;
+	ray.origin = original_origin;
 	return false;
 }
 
