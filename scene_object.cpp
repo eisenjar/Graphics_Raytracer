@@ -43,6 +43,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	if(std::abs(POI.m_data[0]) > 0.5 || std::abs(POI.m_data[1]) > 0.5) return false; //make sure it's not outside the bounds
 
 	ray.intersection.point = modelToWorld * POI;
+	std::cout << ray.intersection.point << std::endl;
 	ray.intersection.none = false;
 	Colour col(1.0, 0.0, 0.0);
 	ray.col = col;
