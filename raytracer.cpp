@@ -17,7 +17,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#define AA 0 
+#define AA 1
 
 Raytracer::Raytracer() : _lightSource(NULL) {
 	_root = new SceneDagNode();
