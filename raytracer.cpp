@@ -231,6 +231,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 		Ray3D reflection(ray.intersection.point + (.1*ray.reflect_dir), ray.reflect_dir);
 		reflection.bounce = ray.bounce + 1;
 		if(reflection.bounce <= MAX_REFL_BOUNCES) {
+			//TODO make this better
 			Colour colorTemp = .1*shadeRay(reflection);
 			colorTemp.clamp();
 			col = .9*col + colorTemp;	

@@ -76,6 +76,8 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	Vector3D o_vec = ray.origin - origin;
 	Vector3D d_vec = ray.dir;
 
+	double d;
+
 	//Equation of the intersection of a line and a sphere, we don't need both intersections, just the nearest one
 	double d1 = (-(d_vec.dot(o_vec)) - std::sqrt( std::pow(d_vec.dot(o_vec),2) - d_vec.dot(d_vec) * ( o_vec.dot(o_vec) - 1)))/(d_vec.dot(d_vec));
 	double d2 = (-(d_vec.dot(o_vec)) + std::sqrt( std::pow(d_vec.dot(o_vec),2) - d_vec.dot(d_vec) * ( o_vec.dot(o_vec) - 1)))/(d_vec.dot(d_vec));
@@ -87,18 +89,17 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		ray.origin = original_origin;
 		return false;
 	}
-
-	double d;
-
+	
+	//We want the smaller intersection
 	if(d1 < d2)
 		d = d1;
 	else
 		d = d2;
 
+	//Possibly required?
 	d = std::abs(d);
 
 	Point3D temp = ray.origin + d * ray.dir;
-
 	if(ray.intersection.none == true || distance(ray.intersection.point, original_origin) > distance(modelToWorld * temp, original_origin)) {
 		ray.intersection.point = modelToWorld * temp;
 		ray.intersection.none = false;
