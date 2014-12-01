@@ -17,7 +17,10 @@
 #include <iostream>
 #include <cstdlib>
 
-#define AA 1
+#define AA 0
+#define REFL 1
+
+#define MAX_REFL_BOUNCES 3
 
 Raytracer::Raytracer() : _lightSource(NULL) {
 	_root = new SceneDagNode();
@@ -224,12 +227,17 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	// anything.
 	if (!ray.intersection.none) {
 		computeShading(ray); 
-		col = ray.col;  
+		col = ray.col;
+		Ray3D reflection(ray.intersection.point, ray.reflect_dir);
+		reflection.bounce = ray.bounce + 1;
+		if(reflection.bounce <= MAX_REFL_BOUNCES) {
+			col = col + 0.2*shadeRay(reflection);
+			col.clamp();
+		}
 	}
 
 	// You'll want to call shadeRay recursively (with a different ray, 
 	// of course) here to implement reflection/refraction effects.  
-
 	return col; 
 }	
 

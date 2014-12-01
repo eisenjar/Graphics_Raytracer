@@ -165,15 +165,18 @@ struct Intersection {
 struct Ray3D {
 	Ray3D() {
 		intersection.none = true;
-		amb = false; 
+		bounce = 0; 
 	}
 	Ray3D( Point3D p, Vector3D v ) : origin(p), dir(v) {
 		intersection.none = true;
-		amb = false;
+		bounce = 0;
 	}
 	// Origin and direction of the ray.
 	Point3D origin;
 	Vector3D dir;
+
+	Vector3D reflect_dir;
+
 	// Intersection status, should be computed by the intersection
 	// function.
 	Intersection intersection;
@@ -181,7 +184,10 @@ struct Ray3D {
 	// function.
 	Colour col;
 
-	bool amb;
+	//whether or not we have already bounced
+	int bounce;
+
+	
 };
 #endif
 
