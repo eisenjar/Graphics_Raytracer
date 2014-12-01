@@ -45,8 +45,6 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		ray.intersection.point = modelToWorld * POI;
 
 		ray.intersection.none = false;
-		Colour col(1.0, 0.0, 0.0);
-		ray.col = col;
 
 		ray.intersection.normal = transNorm(worldToModel,normal);
 		ray.intersection.normal.normalize();
@@ -95,9 +93,6 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	if(ray.intersection.none == true || distance(ray.intersection.point, original_origin) > distance(modelToWorld * temp, original_origin)) {
 		ray.intersection.point = temp;
 		ray.intersection.none = false;
-
-		Colour col(1.0, 1.0, 1.0);
-		ray.col = col;
 
 		ray.intersection.normal = temp - origin;
 		ray.intersection.normal.normalize();

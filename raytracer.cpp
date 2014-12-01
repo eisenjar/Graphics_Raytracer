@@ -186,7 +186,6 @@ void Raytracer::computeShading( Ray3D& ray ) {
 	LightListNode* curLight = _lightSource;
 	for (;;) {
 		if (curLight == NULL) break;
-		// Each lightSource provides its own shading function.
 
 		// Implement shadows here if needed.
 
