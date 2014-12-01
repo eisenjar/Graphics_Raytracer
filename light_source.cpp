@@ -16,7 +16,8 @@
 #define DIFF 1
 #define SPEC 1
 
-void PointLight::shade( Ray3D& ray ) {
+
+void PointLight::shade( Ray3D& ray, bool shouldshade ) {
 
 	Vector3D light_to_intersection = ray.intersection.point - this->_pos;
 	light_to_intersection.normalize();
@@ -31,26 +32,28 @@ void PointLight::shade( Ray3D& ray ) {
 	Vector3D view_dir = -ray.dir;
 	view_dir.normalize();
 	
-
 	#if AMB
-	if(ray.col.m_data[0] == 0 && ray.col.m_data[1] == 0 && ray.col.m_data[2] == 0) //make sure ambient light hasn't already been added
 		ray.col = ray.col + ray.intersection.mat->ambient*this->_col_ambient;
 	#endif
+	
+	if(shouldshade)
+		#if DIFF
+		if(intersection_dot_normal > 0) 
+			ray.col = ray.col + intersection_dot_normal*ray.intersection.mat->diffuse*this->_col_diffuse;
+		#endif
+	
 
-	#if DIFF
-	if(intersection_dot_normal > 0) 
-		ray.col = ray.col + intersection_dot_normal*ray.intersection.mat->diffuse*this->_col_diffuse;
-	#endif
 
-	#if SPEC
-	double specular_component =  view_dir.dot(reflect_dir);
-	if(specular_component > 0)
-	{
-		double specular_component_full = std::pow(specular_component,ray.intersection.mat->specular_exp);
-		ray.col = ray.col + specular_component_full*ray.intersection.mat->specular*this->_col_specular;
-	}
-	#endif
+		#if SPEC
+		double specular_component =  view_dir.dot(reflect_dir);
+		if(specular_component > 0)
+		{
+			double specular_component_full = std::pow(specular_component,ray.intersection.mat->specular_exp);
+			ray.col = ray.col + specular_component_full*ray.intersection.mat->specular*this->_col_specular;
+		}
+		#endif
 
+	
 	ray.reflect_dir = ray.dir - 2*(ray.dir.dot(ray.intersection.normal)) * ray.intersection.normal;
 	ray.reflect_dir.normalize();
 	//ray.bounce = true;

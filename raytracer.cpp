@@ -192,7 +192,26 @@ void Raytracer::computeShading( Ray3D& ray ) {
 
 		// Implement shadows here if needed.
 
-		curLight->light->shade(ray);
+		Point3D light_pos = curLight->light->get_position();
+		
+		
+		Point3D intersection_point = ray.intersection.point;
+		
+		Vector3D shadow_dir = light_pos - intersection_point;
+		shadow_dir.normalize();
+		Ray3D shadow_ray(intersection_point + .1*shadow_dir,shadow_dir);
+		shadow_ray.dir.normalize();
+
+		traverseScene(_root, shadow_ray);
+
+		Point3D shadow_intersection_point = shadow_ray.intersection.point; 
+
+		bool test = false;
+
+		if(shadow_ray.intersection.none || distance(intersection_point,light_pos) < distance(shadow_intersection_point,intersection_point))
+			test= true;
+		
+		curLight->light->shade(ray,test);
 		curLight = curLight->next;
 	}
 
@@ -342,6 +361,7 @@ int main(int argc, char* argv[])
 	// scene and renders it from two different view points, DO NOT
 	// change this if you're just implementing part one of the 
 	// assignment.  
+
 	Raytracer raytracer;
 	int width = 320; 
 	int height = 240; 
@@ -372,11 +392,13 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
+	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &jade );
 	
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
-	raytracer.translate(sphere, Vector3D(0, 0, -5));	
+	raytracer.translate(sphere, Vector3D(0, 0, -5));
+	raytracer.translate(cylinder, Vector3D(0, 0, -3));	
 	raytracer.rotate(sphere, 'x', -45); 
 	raytracer.rotate(sphere, 'z', 45); 
 	raytracer.scale(sphere, Point3D(0, 0, 0), factor1);
