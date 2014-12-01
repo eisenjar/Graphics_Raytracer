@@ -51,7 +51,8 @@ void PointLight::shade( Ray3D& ray ) {
 	}
 	#endif
 
-	ray.reflect_dir = -reflect_dir;
+	ray.reflect_dir = ray.dir - 2*(ray.dir.dot(ray.intersection.normal)) * ray.intersection.normal;
+	ray.reflect_dir.normalize();
 	//ray.bounce = true;
 	ray.col.clamp();
 

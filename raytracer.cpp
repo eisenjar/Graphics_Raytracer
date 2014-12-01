@@ -20,7 +20,7 @@
 #define AA 0
 #define REFL 1
 
-#define MAX_REFL_BOUNCES 3
+#define MAX_REFL_BOUNCES 1
 
 Raytracer::Raytracer() : _lightSource(NULL) {
 	_root = new SceneDagNode();
@@ -227,16 +227,16 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	// anything.
 	if (!ray.intersection.none) {
 		computeShading(ray); 
-		Ray3D reflection(ray.intersection.point, ray.reflect_dir);
+			col = ray.col;
+		Ray3D reflection(ray.intersection.point + (.1*ray.reflect_dir), ray.reflect_dir);
 		reflection.bounce = ray.bounce + 1;
 		if(reflection.bounce <= MAX_REFL_BOUNCES) {
-			Colour col_temp = shadeRay(reflection);
-			PointLight refl_light(reflection.intersection.point, col_temp, col_temp, col_temp);
-			refl_light.shade(ray);
-			col.clamp();
+			Colour colorTemp = .1*shadeRay(reflection);
+			colorTemp.clamp();
+			col = .9*col + colorTemp;	
 		}
-		col = col + ray.col;
-		col.clamp();
+
+			col.clamp();
 	}
 
 	// You'll want to call shadeRay recursively (with a different ray, 
