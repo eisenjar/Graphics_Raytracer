@@ -88,13 +88,13 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		return false;
 	}
 
-	Point3D temp = modelToWorld * (ray.origin + d * ray.dir);
+	Point3D temp = ray.origin + d * ray.dir;
 
 	if(ray.intersection.none == true || distance(ray.intersection.point, original_origin) > distance(modelToWorld * temp, original_origin)) {
-		ray.intersection.point = temp;
+		ray.intersection.point = modelToWorld * temp;
 		ray.intersection.none = false;
 
-		ray.intersection.normal = temp - origin;
+		ray.intersection.normal = transNorm(worldToModel,  origin-temp);
 		ray.intersection.normal.normalize();
 
 		//restore
