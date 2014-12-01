@@ -236,6 +236,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			col.clamp();
 		}
 		col = col + ray.col;
+		col.clamp();
 	}
 
 	// You'll want to call shadeRay recursively (with a different ray, 
