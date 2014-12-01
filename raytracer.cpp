@@ -242,9 +242,11 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 	initPixelBuffer();
 	viewToWorld = initInvViewMatrix(eye, view, up);
 
-	enum AAplace { TopLeft=0, TopRight, BottomRight, BottomLeft };
-	AAplace place = TopLeft;
+	//Sample 4 times per pixel for Anti Aliasing at (.25,25),(.25,.75),(.75,.25),(.75,.75)
+	enum Sampleplace { TopLeft=0, TopRight, BottomRight, BottomLeft };
+	Sampleplace place = TopLeft;
 
+	//conintue sampling
 	bool continueloop;
 
 	// Construct a ray for each pixel.
@@ -258,29 +260,24 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 				// image plane is at z = -1.
 				Point3D origin(0, 0, 0);
 				Point3D imagePlane;
-				short y = 0;
-				short x = 0;
+				short y = 0; //Sampling from top side of the pixel
+				short x = 0; //Sampling from the right side of the pixel
 				if(place == TopLeft || place == TopRight)
-				{
 					y = 1;
-				}
 				if(place == TopRight || place == BottomRight)
 					x = 1;
 
 				imagePlane[0] = (-double(width)/2 + 0.25 + 0.5*x + j)/factor;
 				imagePlane[1] = (-double(height)/2 + 0.25 + 0.5*y + i)/factor;
 				imagePlane[2] = -1;
-
-	//			std::cout << imagePlane[0] << imagePlane[1] << std::endl;
-
-				// TODO: Convert ray to world space and call 
-				// shadeRay(ray) to generate pixel colour. 
 			
+				//Shoot the ray
 				Ray3D ray(origin, imagePlane - origin);
 				ray.dir = viewToWorld * ray.dir;
 				ray.origin = viewToWorld * ray.origin;
 				ray.dir.normalize();
 
+				//Temp result of the ray colour result
 				Colour col_temp = shadeRay(ray); 
 				col[0] += col_temp[0]/4;
 				col[1] += col_temp[1]/4;
@@ -300,6 +297,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 					case BottomLeft:
 						place = TopLeft;
 						continueloop=false;
+						//Save result
 						_rbuffer[i*width+j] = int(col[0]*255);
 						_gbuffer[i*width+j] = int(col[1]*255);
 						_bbuffer[i*width+j] = int(col[2]*255);
