@@ -18,7 +18,9 @@
 void PointLight::shade( Ray3D& ray ) {
 
 	Vector3D light_to_intersection = ray.intersection.point - this->_pos;
+	light_to_intersection.normalize();
 	double intersection_dot_normal = -light_to_intersection.dot(ray.intersection.normal);
+	
 
 	#if AMB
 
@@ -27,7 +29,8 @@ void PointLight::shade( Ray3D& ray ) {
 	#endif
 
 	#if DIFF
-	if(intersection_dot_normal > 0) ray.col = ray.col + ray.intersection.mat->diffuse*this->_col_diffuse;
+	if(intersection_dot_normal > 0) 
+		ray.col = ray.col + intersection_dot_normal*ray.intersection.mat->diffuse*this->_col_diffuse;
 	#endif
 
 	#if SPEC
