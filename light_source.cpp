@@ -13,7 +13,7 @@
 
 #define AMB 1
 #define DIFF 1
-#define SPEC 1
+#define SPEC 0
 
 void PointLight::shade( Ray3D& ray ) {
 
