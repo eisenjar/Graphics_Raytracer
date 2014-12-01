@@ -227,13 +227,15 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	// anything.
 	if (!ray.intersection.none) {
 		computeShading(ray); 
-		col = ray.col;
 		Ray3D reflection(ray.intersection.point, ray.reflect_dir);
 		reflection.bounce = ray.bounce + 1;
 		if(reflection.bounce <= MAX_REFL_BOUNCES) {
-			col = col + 0.2*shadeRay(reflection);
+			Colour col_temp = shadeRay(reflection);
+			PointLight refl_light(reflection.intersection.point, col_temp, col_temp, col_temp);
+			refl_light.shade(ray);
 			col.clamp();
 		}
+		col = col + ray.col;
 	}
 
 	// You'll want to call shadeRay recursively (with a different ray, 
