@@ -21,21 +21,14 @@ void PointLight::shade( Ray3D& ray ) {
 	double intersection_dot_normal = -light_to_intersection.dot(ray.intersection.normal);
 
 	#if AMB
-	if(!ray.amb) ray.col = ray.intersection.mat->ambient;
+	if(ray.col.m_data[0] == 0 && ray.col.m_data[1] == 0 && ray.col.m_data[2] == 0) ray.col = ray.col + ray.intersection.mat->ambient; //make sure ambient light hasn't already been added
 	#endif
 
 	#if DIFF
-	
 	if(intersection_dot_normal > 0) ray.col = ray.col + ray.intersection.mat->diffuse;
 	#endif
 
-	// TODO: implement this function to fill in values for ray.col 
-	// using phong shading.  Make sure your vectors are normalized, and
-	// clamp colour values to 1.0.
-	//
-	// It is assumed at this point that the intersection information in ray 
-	// is available.  So be sure that traverseScene() is called on the ray 
-	// before this function.  
+	ray.col.clamp();
 
 }
 
