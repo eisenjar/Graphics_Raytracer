@@ -96,10 +96,17 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		ray.intersection.point = temp;
 		ray.intersection.none = false;
 
-	//	std::cout << ray.intersection.point << std::endl;
-
 		Colour col(1.0, 1.0, 1.0);
 		ray.col = col;
+
+		ray.intersection.normal = temp - origin;
+		ray.intersection.normal.normalize();
+
+		//restore
+		ray.dir = modelToWorld * ray.dir;
+		ray.origin = original_origin;
+
+		return true;
 	}
 
 	ray.dir = modelToWorld * ray.dir;
