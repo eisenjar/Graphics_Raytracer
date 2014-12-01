@@ -17,6 +17,8 @@
 #include <iostream>
 #include <cstdlib>
 
+#define AA 0 
+
 Raytracer::Raytracer() : _lightSource(NULL) {
 	_root = new SceneDagNode();
 }
@@ -277,12 +279,14 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 				ray.origin = viewToWorld * ray.origin;
 				ray.dir.normalize();
 
+				#if AA
 				//Temp result of the ray colour result
 				Colour col_temp = shadeRay(ray); 
 				col[0] += col_temp[0]/4;
 				col[1] += col_temp[1]/4;
 				col[2] += col_temp[2]/4;
-				
+	
+							
 				switch(place)
 				{
 					case TopLeft:
@@ -306,6 +310,13 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 						std::cout << "what?" << std::endl;
 						break;
 				}
+				#else
+				col = shadeRay(ray);
+				continueloop = false;
+				_rbuffer[i*width+j] = int(col[0]*255);
+				_gbuffer[i*width+j] = int(col[1]*255);
+				_bbuffer[i*width+j] = int(col[2]*255);
+				#endif
 			}
 		}
 	}
