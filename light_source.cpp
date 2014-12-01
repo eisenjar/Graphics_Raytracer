@@ -21,11 +21,15 @@ void PointLight::shade( Ray3D& ray ) {
 	double intersection_dot_normal = -light_to_intersection.dot(ray.intersection.normal);
 
 	#if AMB
-	if(ray.col.m_data[0] == 0 && ray.col.m_data[1] == 0 && ray.col.m_data[2] == 0) ray.col = ray.col + ray.intersection.mat->ambient; //make sure ambient light hasn't already been added
+	if(ray.col.m_data[0] == 0 && ray.col.m_data[1] == 0 && ray.col.m_data[2] == 0) ray.col = ray.col + ray.intersection.mat->ambient*this->_col_ambient; //make sure ambient light hasn't already been added
 	#endif
 
 	#if DIFF
-	if(intersection_dot_normal > 0) ray.col = ray.col + ray.intersection.mat->diffuse;
+	if(intersection_dot_normal > 0) ray.col = ray.col + ray.intersection.mat->diffuse*this->_col_diffuse;
+	#endif
+
+	#if SPEC
+	
 	#endif
 
 	ray.col.clamp();
