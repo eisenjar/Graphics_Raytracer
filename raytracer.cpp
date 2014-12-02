@@ -282,11 +282,14 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 				col = ((1-ray.intersection.mat->reflectiveness))*col;
 				random = ray.intersection.mat->glossiness * randomest_number()/85000.0;
 			}
-			else 
+			else //don't shoot any glossiness rays because the material isn't glossy 
 				i = MAX_GLOSSINESS_RAYS;
+
+			//Could probably be done better
 			Vector3D reflection_dir= ray.reflect_dir + ( Vector3D(random,random,random));
 			reflection_dir.normalize();
-			Ray3D reflection((ray.intersection.point + (.01*ray.reflect_dir)), reflection_dir);
+
+			Ray3D reflection((ray.intersection.point + (.01*ray.reflection_dir)), reflection_dir);
 			reflection.reflect_bounce = ray.reflect_bounce + 1;
 			if(reflection.reflect_bounce <= MAX_REFLECT_BOUNCES) {
 				//TODO make this better
@@ -440,6 +443,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 int main(int argc, char* argv[])
 {	
 
+	//For the glossy reflection
 	std::srand(time(NULL));
 	// Build your scene and setup your camera here, by calling 
 	// functions from Raytracer.  The code here sets up an example
