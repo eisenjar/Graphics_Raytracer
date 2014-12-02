@@ -154,6 +154,9 @@ struct Material {
 struct Intersection {
 	// Location of intersection.
 	Point3D point;
+
+	//Object space coordinates for texture mapping
+	Point3D untransformed;
 	// Normal at the intersection.
 	Vector3D normal;
 	// Material at the intersection.

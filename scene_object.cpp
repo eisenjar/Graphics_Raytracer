@@ -43,6 +43,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	if(ray.intersection.none == true || distance(ray.intersection.point, ray.origin) > distance(modelToWorld * POI, ray.origin)) {
 		ray.intersection.point = modelToWorld * POI;
+		ray.intersection.untransformed = POI;
 
 		ray.intersection.none = false;
 
@@ -108,6 +109,7 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	Point3D temp = ray.origin + d * ray.dir;
 	if(ray.intersection.none == true || distance(ray.intersection.point, original_origin) > distance(modelToWorld * temp, original_origin)) {
 		ray.intersection.point = modelToWorld * temp;
+		ray.intersection.untransformed = temp;
 		ray.intersection.none = false;
 
 		ray.intersection.normal = transNorm(worldToModel, temp-origin);
@@ -198,6 +200,7 @@ bool UnitCircle::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	if(ray.intersection.none == true || distance(ray.intersection.point, ray.origin) > distance(modelToWorld * POI, ray.origin)) {
 		ray.intersection.point = modelToWorld * POI;
+		ray.intersection.untransformed = POI;
 
 		ray.intersection.none = false;
 
@@ -208,4 +211,26 @@ bool UnitCircle::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	}
 	else return false;
 
+}
+
+//intersection point is in object space; x and y values between -0.5 and 0.5
+Colour UnitSquare::get_color( Point3D intersection ) {
+	unsigned long int width_index = (intersection.m_data[0] + 0.5)*this->i_width;
+	unsigned long int height_index = (intersection.m_data[1] + 0.5)*this->i_height;
+
+	unsigned long int array_index = width_index + i_width*height_index;
+
+	return Colour ((int)(rarray[0][array_index]), (int)(garray[0][array_index]), (int)(barray[0][array_index]));
+}
+Colour UnitSphere::get_color( Point3D intersection ) {
+	//placeholder
+	return Colour(1,0,0);
+}
+Colour UnitCylinder::get_color( Point3D intersection ) {
+	//placeholder
+	return Colour(1,0,0);
+}
+Colour UnitCircle::get_color( Point3D intersection ) {
+	//placeholder
+	return Colour(1,0,0);
 }

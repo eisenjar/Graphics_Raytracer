@@ -189,6 +189,12 @@ void Raytracer::traverseScene( SceneDagNode* node, Ray3D& ray ) {
 		// Perform intersection.
 		if (node->obj->intersect(ray, _worldToModel, _modelToWorld)) {
 			ray.intersection.mat = node->mat;
+			/*if(node->obj->t_mapped)
+			{
+				//replace the colors of the material with those found in the texture map
+				Colour map_colour = node->obj->get_color(ray.intersection.untransformed);
+				ray.intersection.mat->ambient /*= ray.intersection.mat->diffuse = ray.intersection.mat->specular = map_colour;
+			}*/
 		}
 	}
 	// Traverse the children.
@@ -496,48 +502,56 @@ int main(int argc, char* argv[])
 	raytracer.addLightSource( new PointLight(Point3D(0, 0, 5), 
 				Colour(0.9, 0.9, 0.9) ) );
 
-	unsigned long int i_width; long int i_height;
-	unsigned char **rarray; unsigned char **garray; unsigned char **barray;
-
-	//bmp_read("texture_map.bmp", &i_width, &i_height, rarray, garray, barray);
-
 	// Add a unit square into the scene with material mat.
-	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &glass );
+	//SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &glass );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
-	SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &teal );
-	SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &blue );
-	SceneDagNode* circle = raytracer.addObject( new UnitCircle(), &yellow );
-	SceneDagNode* circle2 = raytracer.addObject( new UnitCircle(), &yellow);
-	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &yellow);
+	//SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &teal );
+	//SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &blue );
+	//SceneDagNode* circle = raytracer.addObject( new UnitCircle(), &yellow );
+	//SceneDagNode* circle2 = raytracer.addObject( new UnitCircle(), &yellow);
+	//SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &yellow);
+
+	plane->obj->rarray = new unsigned char *[5000]; plane->obj->garray = new unsigned char *[5000]; plane->obj->barray = new unsigned char *[5000];
+
+	plane->obj->t_mapped = true;
+
+	bmp_read("texture_map.bmp", &(plane->obj->i_width), &(plane->obj->i_height), plane->obj->rarray, plane->obj->garray, plane->obj->barray);
+
+	//std::cout << (int)garray[0][300] << std::endl;
+
+	//for(int i = 0; i < i_height; i++) {
+		//for(int j = 0; j < 100000; j++) std::cout << "i: " << 0 << ", j: " << j << ", red: " << (int)garray[0][j] << std::endl;
+	//}
+
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.5, 1.5, 1.5 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
-	raytracer.translate(sphere, Vector3D(-.5, -.5, -5));
+	//raytracer.translate(sphere, Vector3D(-.5, -.5, -5));
 
-	raytracer.rotate(cylinder, 'y', 40);
-	raytracer.rotate(circle, 'y', 40);
-	raytracer.rotate(circle2, 'y', 40);
+	//raytracer.rotate(cylinder, 'y', 40);
+	//raytracer.rotate(circle, 'y', 40);
+	//raytracer.rotate(circle2, 'y', 40);
 	
-	raytracer.translate(cylinder, Vector3D(4, .5, -5.5));
-	raytracer.translate(circle, Vector3D(4, .5, -5));
-	raytracer.translate(circle2, Vector3D(4, .5, -6));
-	raytracer.rotate(circle2, 'y', 180);
-	raytracer.rotate(cylinder, 'x', 180);
+	//raytracer.translate(cylinder, Vector3D(4, .5, -5.5));
+	//raytracer.translate(circle, Vector3D(4, .5, -5));
+	//raytracer.translate(circle2, Vector3D(4, .5, -6));
+	//raytracer.rotate(circle2, 'y', 180);
+	//raytracer.rotate(cylinder, 'x', 180);
 
-	raytracer.rotate(sphere, 'x', 45); 
-	raytracer.rotate(sphere, 'z', 45); 
-	raytracer.scale(sphere, Point3D(0, 0, 0), factor1);
+	//raytracer.rotate(sphere, 'x', 45); 
+	//raytracer.rotate(sphere, 'z', 45); 
+	//raytracer.scale(sphere, Point3D(0, 0, 0), factor1);
 
 	raytracer.translate(plane, Vector3D(0, 0, -8));	
 	raytracer.scale(plane, Point3D(0, 0, 0), factor2);
 
-	raytracer.translate(plane2, Vector3D(0, -3, -6));	
-	raytracer.rotate(plane2, 'x', 90); 
-	raytracer.scale(plane2, Point3D(0, 0, 0), factor2);
+	//raytracer.translate(plane2, Vector3D(0, -3, -6));	
+	//raytracer.rotate(plane2, 'x', 90); 
+	//raytracer.scale(plane2, Point3D(0, 0, 0), factor2);
 
-	raytracer.translate(plane3, Vector3D(-3, 0, -6));	
-	raytracer.rotate(plane3, 'y', 90); 
-	raytracer.scale(plane3, Point3D(0, 0, 0), factor2);
+	//raytracer.translate(plane3, Vector3D(-3, 0, -6));	
+	//raytracer.rotate(plane3, 'y', 90); 
+	//raytracer.scale(plane3, Point3D(0, 0, 0), factor2);
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
