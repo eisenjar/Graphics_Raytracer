@@ -17,11 +17,14 @@
 #include <iostream>
 #include <cstdlib>
 
-#define AA 1
+#define AA 0
 #define REFL 1
 
-#define MAX_REFLECT_BOUNCES 6
-#define MAX_REFRAC_BOUNCES 6
+#define MAX_REFLECT_BOUNCES 2
+#define MAX_REFRAC_BOUNCES 2
+#define MAX_GLOSSINESS_RAYS 8
+
+int randseed = 0;
 
 Raytracer::Raytracer() : _lightSource(NULL) {
 	_root = new SceneDagNode();
@@ -101,6 +104,18 @@ void Raytracer::rotate( SceneDagNode* node, char axis, double angle ) {
 			node->invtrans = rotation*node->invtrans; 
 		}	
 	}
+}
+
+
+
+//A truly random number generator
+int randomest_number()
+{
+
+			//This is not very random, but adding a mersenne twister is hard and this is not
+			int rand = (std::rand()) % 10000;
+			
+			return rand-500;
 }
 
 void Raytracer::translate( SceneDagNode* node, Vector3D trans ) {
@@ -256,16 +271,38 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	if (!ray.intersection.none) {
 		computeShading(ray); 
 		col =  ray.col;
-		Ray3D reflection(ray.intersection.point + (.01*ray.reflect_dir), ray.reflect_dir);
-		reflection.reflect_bounce = ray.reflect_bounce + 1;
-		if(reflection.reflect_bounce <= MAX_REFLECT_BOUNCES) {
-			//TODO make this better
-			Colour colorReflect = ray.intersection.mat->reflectiveness*shadeRay(reflection);
-			colorReflect.clamp();
-			col = (1-ray.intersection.mat->reflectiveness)*col + colorReflect;	
-		}
+		float random = 0.0;
+		int i;
+
+		for ( i = 0; i < MAX_GLOSSINESS_RAYS; i++)
+		{	
+			if(ray.intersection.mat->glossiness)
+			{
+				if( i == 0)
+				col = ((1-ray.intersection.mat->reflectiveness))*col;
+				random = ray.intersection.mat->glossiness * randomest_number()/85000.0;
+			}
+			else 
+				i = MAX_GLOSSINESS_RAYS;
+			Vector3D reflection_dir= ray.reflect_dir + ( Vector3D(random,random,random));
+			reflection_dir.normalize();
+			Ray3D reflection((ray.intersection.point + (.01*ray.reflect_dir)), reflection_dir);
+			reflection.reflect_bounce = ray.reflect_bounce + 1;
+			if(reflection.reflect_bounce <= MAX_REFLECT_BOUNCES) {
+				//TODO make this better
+				Colour colorReflect = ray.intersection.mat->reflectiveness*shadeRay(reflection);
+				colorReflect.clamp();
+				if(!ray.intersection.mat->glossiness)
+					col = ((1-ray.intersection.mat->reflectiveness)*col + colorReflect);	
+				else
+				{
+					col[0] += (colorReflect)[0]/MAX_GLOSSINESS_RAYS;	
+					col[1] += (colorReflect)[1]/MAX_GLOSSINESS_RAYS;	
+					col[2] += (colorReflect)[2]/MAX_GLOSSINESS_RAYS;	
+				}
+			}
 			col.clamp();
-	
+		}
 		if(ray.intersection.mat->refrac_ratio)
 		{
 			double n_mat_in;
@@ -292,7 +329,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			refrac_dir.normalize();
 
 			Ray3D refraction(ray.intersection.point + (.01*refrac_dir), refrac_dir);
-			reflection.refrac_bounce = ray.refrac_bounce + 1;
+			refraction.refrac_bounce = ray.refrac_bounce + 1;
 			refraction.dir.normalize();
 		
 			if(ray.intersection.mat->transparency && refraction.refrac_bounce <= MAX_REFRAC_BOUNCES)
@@ -402,6 +439,8 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 
 int main(int argc, char* argv[])
 {	
+
+	std::srand(time(NULL));
 	// Build your scene and setup your camera here, by calling 
 	// functions from Raytracer.  The code here sets up an example
 	// scene and renders it from two different view points, DO NOT
@@ -426,13 +465,13 @@ int main(int argc, char* argv[])
 	// Defines a material for shading.
 	Material gold( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648), 
 			Colour(0.628281, 0.555802, 0.366065), 
-			51.2, 0.2, 1.2, 0.15 );
+			51.2, 0.2, 1.2, 0.15, 0.0 );
 	Material jade( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63), 
 			Colour(0.316228, 0.316228, 0.316228), 
-			12.8, 0.0, 1.0, 0.15 );
+			12.8, 0.0, 1.0, 0.15, 1.0 );
 	Material mirror( Colour(.5,.5,.5), Colour(0.5,0.5,0.5),
 			Colour(1.0,1.0,1.0),
-			10.0,0.0,1.0, .8);
+			10.0,0.0,1.0, .8, 0.0);
 
 	// Defines a point light source.
 	raytracer.addLightSource( new PointLight(Point3D(0, 0, 5), 
