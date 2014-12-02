@@ -271,6 +271,8 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	if (!ray.intersection.none) {
 		computeShading(ray); 
 		col =  ray.col;
+		
+		//For the glossiness
 		float random = 0.0;
 		int i;
 
@@ -289,7 +291,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			Vector3D reflection_dir= ray.reflect_dir + ( Vector3D(random,random,random));
 			reflection_dir.normalize();
 
-			Ray3D reflection((ray.intersection.point + (.01*ray.reflection_dir)), reflection_dir);
+			Ray3D reflection((ray.intersection.point + (.01*reflection_dir)), reflection_dir);
 			reflection.reflect_bounce = ray.reflect_bounce + 1;
 			if(reflection.reflect_bounce <= MAX_REFLECT_BOUNCES) {
 				//TODO make this better
