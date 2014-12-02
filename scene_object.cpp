@@ -193,6 +193,8 @@ bool UnitCircle::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	if(std::sqrt(pow(POI.m_data[0],2)+pow(POI.m_data[1],2)) > 1) return false; //make sure it's not outside the bounds
 
+	if(normal.dot(new_dir) > 0)
+		return false;
 
 	if(ray.intersection.none == true || distance(ray.intersection.point, ray.origin) > distance(modelToWorld * POI, ray.origin)) {
 		ray.intersection.point = modelToWorld * POI;
