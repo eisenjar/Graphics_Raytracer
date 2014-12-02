@@ -17,7 +17,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#define AA 1
+#define AA 0
 #define REFL 1
 
 #define MAX_REFLECT_BOUNCES 4
@@ -471,7 +471,7 @@ int main(int argc, char* argv[])
 	// Defines a material for shading.
 	Material gold( Colour(0.3, 0.3, 0.3), Colour(0.9, 0.9, 0.9), 
 			Colour(0.628281, 0.655802, 0.666065), 
-			51.2, 0.85, 1.6, 0.9, 1.0 );
+			51.2, 0.85, 1.6, 0.9, 0.0 );
 	Material jade( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63), 
 			Colour(0.316228, 0.316228, 0.316228), 
 			12.8, 0.0, 1.0, 0.15, 0.0 );
@@ -491,32 +491,35 @@ int main(int argc, char* argv[])
 				Colour(0.9, 0.9, 0.9) ) );
 
 	// Add a unit square into the scene with material mat.
-	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
+	//SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
-	SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &yellow );
-	SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &blue );
-	//SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &jade );
+	//SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &yellow );
+	//SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &blue );
+	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &yellow );
 	
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.5, 1.5, 1.5 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
-	raytracer.translate(sphere, Vector3D(0, 0, -6));
-	//raytracer.translate(cylinder, Vector3D(0, 0, -3));	
+	//raytracer.translate(sphere, Vector3D(0, 0, -6));
+	raytracer.translate(cylinder, Vector3D(0, 0, -3));
+
+	raytracer.rotate(cylinder, 'y', 90);
+	raytracer.rotate(cylinder, 'x', 180);
 	
-	raytracer.rotate(sphere, 'x', 45); 
-	raytracer.rotate(sphere, 'z', 45); 
-	raytracer.scale(sphere, Point3D(0, 0, 0), factor1);
+	//raytracer.rotate(sphere, 'x', 45); 
+	//raytracer.rotate(sphere, 'z', 45); 
+	//raytracer.scale(sphere, Point3D(0, 0, 0), factor1);
 
 	raytracer.translate(plane, Vector3D(0, 0, -8));	
 	raytracer.scale(plane, Point3D(0, 0, 0), factor2);
 
-	raytracer.translate(plane2, Vector3D(0, -3, -6));	
-	raytracer.rotate(plane2, 'x', 90); 
-	raytracer.scale(plane2, Point3D(0, 0, 0), factor2);
+	//raytracer.translate(plane2, Vector3D(0, -3, -6));	
+	//raytracer.rotate(plane2, 'x', 90); 
+	//raytracer.scale(plane2, Point3D(0, 0, 0), factor2);
 
-	raytracer.translate(plane3, Vector3D(-3, 0, -6));	
-	raytracer.rotate(plane3, 'y', 90); 
-	raytracer.scale(plane3, Point3D(0, 0, 0), factor2);
+	//raytracer.translate(plane3, Vector3D(-3, 0, -6));	
+	//raytracer.rotate(plane3, 'y', 90); 
+	//raytracer.scale(plane3, Point3D(0, 0, 0), factor2);
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	

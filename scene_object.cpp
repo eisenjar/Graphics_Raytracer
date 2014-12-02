@@ -154,13 +154,16 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	Vector3D scaled_dir = scale_factor*new_dir;
 	Point3D POI = new_origin + scaled_dir;
 
-	Vector3D normal(-POI.m_data[1],POI.m_data[0],1); //
+	Vector3D normal(POI.m_data[0],POI.m_data[1],0); //
 	normal.normalize();
 
 	if(std::abs(POI.m_data[2]) > 0.5) return false; //make sure it's not outside the bounds
 
+	//std::cout << "This: " << (distance(modelToWorld * POI, ray.origin)) << std::endl;
 
 	if(ray.intersection.none == true || distance(ray.intersection.point, ray.origin) > distance(modelToWorld * POI, ray.origin)) {
+
+		//std::cout << "a: " << a << ", b: " << b << ", c: " << c << std::endl;
 		ray.intersection.point = modelToWorld * POI;
 
 		ray.intersection.none = false;
