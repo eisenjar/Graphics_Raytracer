@@ -490,6 +490,11 @@ int main(int argc, char* argv[])
 	raytracer.addLightSource( new PointLight(Point3D(0, 0, 5), 
 				Colour(0.9, 0.9, 0.9) ) );
 
+	unsigned long int i_width; long int i_height;
+	unsigned char **rarray; unsigned char **garray; unsigned char **barray;
+
+	bmp_read("texture_map.bmp", &i_width, &i_height, rarray, garray, barray);
+
 	// Add a unit square into the scene with material mat.
 	//SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
