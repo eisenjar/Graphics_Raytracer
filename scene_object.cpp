@@ -132,10 +132,10 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	Vector3D new_dir = worldToModel * ray.dir;
 	
 	double c = std::pow(new_origin.m_data[0], 2) + std::pow(new_origin.m_data[1], 2) - 1;
-	if(c == 0) return false;
 
 	double b = 2*(new_origin.m_data[0]*new_dir.m_data[0] + new_origin.m_data[1]*new_dir.m_data[1]);
 	double a = std::pow(new_dir.m_data[0], 2) + std::pow(new_dir.m_data[1], 2);
+	if(a == 0) return false;
 	double discriminant = std::pow(b, 2) - 4*a*c;
 	if(discriminant < 0) return false;
 
