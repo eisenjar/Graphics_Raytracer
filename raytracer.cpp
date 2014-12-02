@@ -20,7 +20,8 @@
 #define AA 0
 #define REFL 1
 
-#define MAX_REFL_BOUNCES 1
+#define MAX_REFLECT_BOUNCES 2
+#define MAX_REFRAC_BOUNCES 2
 
 Raytracer::Raytracer() : _lightSource(NULL) {
 	_root = new SceneDagNode();
@@ -206,12 +207,14 @@ void Raytracer::computeShading( Ray3D& ray ) {
 
 		Point3D shadow_intersection_point = shadow_ray.intersection.point; 
 
-		bool test = false;
+		//Disables specular/diffuse lighting when false
+		bool use_phong = false;
 
+		//Checks if the ray pointing towards the light hits another object, or a object far away
 		if(shadow_ray.intersection.none || distance(intersection_point,light_pos) < distance(shadow_intersection_point,intersection_point))
-			test= true;
+			use_phong = true;
 		
-		curLight->light->shade(ray,test);
+		curLight->light->shade(ray,use_phong);
 		curLight = curLight->next;
 	}
 
@@ -246,17 +249,53 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	// anything.
 	if (!ray.intersection.none) {
 		computeShading(ray); 
-			col = ray.col;
-		Ray3D reflection(ray.intersection.point + (.1*ray.reflect_dir), ray.reflect_dir);
-		reflection.bounce = ray.bounce + 1;
-		if(reflection.bounce <= MAX_REFL_BOUNCES) {
+		col =  ray.col;
+		Ray3D reflection(ray.intersection.point + (.01*ray.reflect_dir), ray.reflect_dir);
+		reflection.reflect_bounce = ray.reflect_bounce + 1;
+		if(reflection.reflect_bounce <= MAX_REFLECT_BOUNCES) {
 			//TODO make this better
-			Colour colorTemp = .1*shadeRay(reflection);
-			colorTemp.clamp();
-			col = .9*col + colorTemp;	
+			Colour colorReflect = .20*shadeRay(reflection);
+			colorReflect.clamp();
+			col = .80*col + colorReflect;	
 		}
-
 			col.clamp();
+	
+		if(ray.intersection.mat->refrac_ratio)
+		{
+			double n_mat_in;
+			double n_mat_out;
+			//snells law
+			//We are going out of the material
+			if ( ray.intersection.normal.dot(ray.dir))
+			{
+				n_mat_in = 1;
+				n_mat_out = ray.intersection.mat->refrac_ratio;
+			}
+			else //We are going in the material
+			{
+				n_mat_in = ray.intersection.mat->refrac_ratio;
+				n_mat_out = 1;	
+			}
+			
+			double cosT1 = -ray.intersection.normal.dot(ray.dir);
+			double sinT2 = n_mat_in / n_mat_out * std::sqrt(1 - std::pow(cosT1,2));
+			double cosT2 = std::sqrt(1 - std::pow(sinT2,2));
+			
+			Vector3D refrac_dir = (n_mat_in / n_mat_out) * ray.dir + ((n_mat_in / n_mat_out)*cosT1 - cosT2) * ray.intersection.normal;
+			refrac_dir.normalize();
+
+			Ray3D refraction(ray.intersection.point + (.01*refrac_dir), refrac_dir);
+			reflection.refrac_bounce = ray.refrac_bounce + 1;
+			refraction.dir.normalize();
+		
+			if(ray.intersection.mat->transparency && refraction.refrac_bounce <= MAX_REFRAC_BOUNCES)
+			{
+				Colour colorRefrac	 = shadeRay(refraction);
+				colorRefrac.clamp();
+				col = (1 - ray.intersection.mat->transparency) * col + ray.intersection.mat->transparency * colorRefrac;
+			}
+		}
+		col.clamp();
 	}
 
 	// You'll want to call shadeRay recursively (with a different ray, 
@@ -380,10 +419,10 @@ int main(int argc, char* argv[])
 	// Defines a material for shading.
 	Material gold( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648), 
 			Colour(0.628281, 0.555802, 0.366065), 
-			51.2 );
+			51.2, 0.2, 1.1 );
 	Material jade( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63), 
 			Colour(0.316228, 0.316228, 0.316228), 
-			12.8 );
+			12.8, 0.0, 1.0 );
 
 	// Defines a point light source.
 	raytracer.addLightSource( new PointLight(Point3D(0, 0, 5), 
@@ -392,13 +431,13 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
-	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &jade );
+	//SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &jade );
 	
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
 	raytracer.translate(sphere, Vector3D(0, 0, -5));
-	raytracer.translate(cylinder, Vector3D(0, 0, -3));	
+	//raytracer.translate(cylinder, Vector3D(0, 0, -3));	
 	raytracer.rotate(sphere, 'x', -45); 
 	raytracer.rotate(sphere, 'z', 45); 
 	raytracer.scale(sphere, Point3D(0, 0, 0), factor1);

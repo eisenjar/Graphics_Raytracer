@@ -46,11 +46,11 @@ public:
 	double& operator[](int i);  
 	double operator[](int i) const;  
 
+	double magnitude(const Vector3D & a);
 	double length() const; 
 	double normalize();
 	double dot(const Vector3D& other) const; 
 	Vector3D cross(const Vector3D& other) const; 
-
 
 	double m_data[3];
 };
@@ -66,6 +66,7 @@ Point3D operator -(const Point3D& u, const Vector3D& v);
 Vector3D cross(const Vector3D& u, const Vector3D& v); 
 std::ostream& operator <<(std::ostream& o, const Point3D& p); 
 std::ostream& operator <<(std::ostream& o, const Vector3D& v); 
+double magnitude(const Vector3D & a);
 
 class Vector4D {
 public:
@@ -131,9 +132,9 @@ Colour operator +(const Colour& u, const Colour& v);
 std::ostream& operator <<(std::ostream& o, const Colour& c); 
 
 struct Material {
-	Material( Colour ambient, Colour diffuse, Colour specular, double exp ) :
+	Material( Colour ambient, Colour diffuse, Colour specular, double exp, double trans, double ratio ) :
 		ambient(ambient), diffuse(diffuse), specular(specular), 
-		specular_exp(exp) {}
+		specular_exp(exp), transparency(trans), refrac_ratio(ratio) {}
 	
 	// Ambient components for Phong shading.
 	Colour ambient; 
@@ -143,6 +144,9 @@ struct Material {
 	Colour specular;
 	// Specular expoent.
 	double specular_exp;
+
+	double transparency;
+	double refrac_ratio;
 };
 
 struct Intersection {
@@ -165,11 +169,13 @@ struct Intersection {
 struct Ray3D {
 	Ray3D() {
 		intersection.none = true;
-		bounce = 0; 
+		reflect_bounce = 0; 
+		refrac_bounce = 0;
 	}
 	Ray3D( Point3D p, Vector3D v ) : origin(p), dir(v) {
 		intersection.none = true;
-		bounce = 0;
+		reflect_bounce = 0;
+		refrac_bounce = 0;
 	}
 	// Origin and direction of the ray.
 	Point3D origin;
@@ -185,8 +191,8 @@ struct Ray3D {
 	Colour col;
 
 	//whether or not we have already bounced
-	int bounce;
-
+	int reflect_bounce;
+	int refrac_bounce;
 	
 };
 #endif

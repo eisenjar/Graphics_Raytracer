@@ -85,6 +85,10 @@ double Vector3D::length() const
 	return sqrt(dot(*this));
 }
 
+double magnitude (const Vector3D & a) {
+	return std::sqrt(std::pow(a.m_data[0],2) + std::pow(a.m_data[1], 2) + std::pow(a.m_data[2], 2));
+}
+
 double Vector3D::normalize() {
 	double denom = 1.0;
 	double x = (m_data[0] > 0.0) ? m_data[0] : -m_data[0];

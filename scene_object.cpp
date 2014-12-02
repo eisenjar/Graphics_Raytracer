@@ -97,6 +97,7 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	else
 		d = d2;
 
+	//Intersection is behind
 	if(d < 0)
 	{
 		ray.dir = modelToWorld * ray.dir;
@@ -154,6 +155,7 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	Point3D POI = new_origin + scaled_dir;
 
 	Vector3D normal(-POI.m_data[1],POI.m_data[0],1); //
+	normal.normalize();
 
 	if(std::abs(POI.m_data[2]) > 0.5) return false; //make sure it's not outside the bounds
 

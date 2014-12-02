@@ -37,7 +37,8 @@ void PointLight::shade( Ray3D& ray, bool shouldshade ) {
 	#endif
 	
 	if(shouldshade)
-		#if DIFF
+	{
+	#if DIFF
 		if(intersection_dot_normal > 0) 
 			ray.col = ray.col + intersection_dot_normal*ray.intersection.mat->diffuse*this->_col_diffuse;
 		#endif
@@ -52,7 +53,7 @@ void PointLight::shade( Ray3D& ray, bool shouldshade ) {
 			ray.col = ray.col + specular_component_full*ray.intersection.mat->specular*this->_col_specular;
 		}
 		#endif
-
+	}
 	
 	ray.reflect_dir = ray.dir - 2*(ray.dir.dot(ray.intersection.normal)) * ray.intersection.normal;
 	ray.reflect_dir.normalize();
