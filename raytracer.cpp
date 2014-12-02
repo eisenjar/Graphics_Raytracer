@@ -24,11 +24,11 @@
 #define MAX_REFLECT_BOUNCES 2
 #define MAX_REFRAC_BOUNCES 2
 #define MAX_GLOSSINESS_RAYS 4
-#define NUM_FRAMES 3
+#define NUM_FRAMES 1
 
 Point3D DOF_point = Point3D(-.1,-.1,-2);
 
-int frames_rendered = 0;
+int frames_rendered = 1;
 
 Raytracer::Raytracer() : _lightSource(NULL) {
 	_root = new SceneDagNode();
@@ -442,9 +442,9 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 						place = TopLeft;
 						continueloop=false;
 						//Save result
-						_rbuffer[i*width+j] += int(col[0]*255)/NUM_FRAMES;
-						_gbuffer[i*width+j] += int(col[1]*255)/NUM_FRAMES;
-						_bbuffer[i*width+j] += int(col[2]*255)/NUM_FRAMES;
+						_rbuffer[i*width+j] = int(col[0]*255)/NUM_FRAMES;
+						_gbuffer[i*width+j] = int(col[1]*255)/NUM_FRAMES;
+						_bbuffer[i*width+j] = int(col[2]*255)/NUM_FRAMES;
 						break;
 					default:
 						std::cout << "what?" << std::endl;
@@ -453,18 +453,19 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 				#else
 				col = shadeRay(ray);
 				continueloop = false;
-				_rbuffer[i*width+j] += int(col[0]*255)/NUM_FRAMES;
-				_gbuffer[i*width+j] += int(col[1]*255)/NUM_FRAMES;
-				_bbuffer[i*width+j] += int(col[2]*255)/NUM_FRAMES;
+				_rbuffer[i*width+j] = int(col[0]*255)/NUM_FRAMES;
+				_gbuffer[i*width+j] = int(col[1]*255)/NUM_FRAMES;
+				_bbuffer[i*width+j] = int(col[2]*255)/NUM_FRAMES;
 				#endif
 			}
 		}
 	}
-
-	if(frames_rendered==NUM_FRAMES)
+	if(frames_rendered == NUM_FRAMES)
+	{
+		std::cout << "writing to file" << std::endl;
 		flushPixelBuffer(fileName);
-	else
-		frames_rendered++;
+	}
+	frames_rendered++;
 }
 
 int main(int argc, char* argv[])
@@ -577,7 +578,7 @@ int main(int argc, char* argv[])
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
-	while(frames_rendered != NUM_FRAMES)
+	while(frames_rendered <= NUM_FRAMES)
 	{
 		std::cout << "rendering frame" << std::endl;
 		raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
@@ -585,13 +586,25 @@ int main(int argc, char* argv[])
 		raytracer.translate(circle, Vector3D(0, 1, 0));
 		raytracer.translate(circle2, Vector3D(0, 1, 0));
 	}
-	std::cout << "Rendering second view\n";
+
+
+	raytracer.translate(cylinder, Vector3D(0, -1*NUM_FRAMES, 0));
+	raytracer.translate(circle, Vector3D(0, -1*NUM_FRAMES, 0));
+	raytracer.translate(circle2, Vector3D(0, -1*NUM_FRAMES, 0));
 	
-	// Render it from a different point of view.
 	Point3D eye2(4, 2, 1);
 	Vector3D view2(-4, -2, -6);
-	raytracer.render(width, height, eye2, view2, up, fov, "view2.bmp");
-	
+
+	frames_rendered = 1;
+
+	while(frames_rendered <= NUM_FRAMES)
+	{// Render it from a different point of view.
+		std::cout << "Rendering second frame\n";
+		raytracer.render(width, height, eye2, view2, up, fov, "view2.bmp");
+		raytracer.translate(cylinder, Vector3D(0, 1, 0));
+		raytracer.translate(circle, Vector3D(0, 1, 0));
+		raytracer.translate(circle2, Vector3D(0, 1, 0));
+	}
 	return 0;
 }
 
