@@ -17,7 +17,7 @@
 #define SPEC 1
 
 
-void PointLight::shade( Ray3D& ray, bool shouldshade ) {
+void PointLight::shade( Ray3D& ray, bool shouldshade, float phong_factor ) {
 
 	Vector3D light_to_intersection = ray.intersection.point - this->_pos;
 	light_to_intersection.normalize();
@@ -40,7 +40,7 @@ void PointLight::shade( Ray3D& ray, bool shouldshade ) {
 	{
 	#if DIFF
 		if(intersection_dot_normal > 0) 
-			ray.col = ray.col + intersection_dot_normal*ray.intersection.mat->diffuse*this->_col_diffuse;
+			ray.col = ray.col + phong_factor*intersection_dot_normal*ray.intersection.mat->diffuse*this->_col_diffuse;
 		#endif
 	
 
@@ -50,7 +50,7 @@ void PointLight::shade( Ray3D& ray, bool shouldshade ) {
 		if(specular_component > 0)
 		{
 			double specular_component_full = std::pow(specular_component,ray.intersection.mat->specular_exp);
-			ray.col = ray.col + specular_component_full*ray.intersection.mat->specular*this->_col_specular;
+			ray.col = ray.col + phong_factor*specular_component_full*ray.intersection.mat->specular*this->_col_specular;
 		}
 		#endif
 	}

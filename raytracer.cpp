@@ -17,11 +17,11 @@
 #include <iostream>
 #include <cstdlib>
 
-#define AA 0
+#define AA 1
 #define REFL 1
 
-#define MAX_REFLECT_BOUNCES 2
-#define MAX_REFRAC_BOUNCES 2
+#define MAX_REFLECT_BOUNCES 6
+#define MAX_REFRAC_BOUNCES 6
 
 Raytracer::Raytracer() : _lightSource(NULL) {
 	_root = new SceneDagNode();
@@ -209,12 +209,18 @@ void Raytracer::computeShading( Ray3D& ray ) {
 
 		//Disables specular/diffuse lighting when false
 		bool use_phong = false;
+		float phong_factor = 1.0;
 
 		//Checks if the ray pointing towards the light hits another object, or a object far away
 		if(shadow_ray.intersection.none || distance(intersection_point,light_pos) < distance(shadow_intersection_point,intersection_point))
 			use_phong = true;
-		
-		curLight->light->shade(ray,use_phong);
+
+		if(!shadow_ray.intersection.none && shadow_ray.intersection.mat->transparency)
+		{
+			use_phong = true;
+			phong_factor = shadow_ray.intersection.mat->transparency;
+		}
+		curLight->light->shade(ray,use_phong,phong_factor);
 		curLight = curLight->next;
 	}
 
@@ -254,9 +260,9 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 		reflection.reflect_bounce = ray.reflect_bounce + 1;
 		if(reflection.reflect_bounce <= MAX_REFLECT_BOUNCES) {
 			//TODO make this better
-			Colour colorReflect = .20*shadeRay(reflection);
+			Colour colorReflect = ray.intersection.mat->reflectiveness*shadeRay(reflection);
 			colorReflect.clamp();
-			col = .80*col + colorReflect;	
+			col = (1-ray.intersection.mat->reflectiveness)*col + colorReflect;	
 		}
 			col.clamp();
 	
@@ -280,7 +286,8 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			double cosT1 = -ray.intersection.normal.dot(ray.dir);
 			double sinT2 = n_mat_in / n_mat_out * std::sqrt(1 - std::pow(cosT1,2));
 			double cosT2 = std::sqrt(1 - std::pow(sinT2,2));
-			
+			double T2 = std::asin(sinT2);
+
 			Vector3D refrac_dir = (n_mat_in / n_mat_out) * ray.dir + ((n_mat_in / n_mat_out)*cosT1 - cosT2) * ray.intersection.normal;
 			refrac_dir.normalize();
 
@@ -419,10 +426,13 @@ int main(int argc, char* argv[])
 	// Defines a material for shading.
 	Material gold( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648), 
 			Colour(0.628281, 0.555802, 0.366065), 
-			51.2, 0.2, 1.1 );
+			51.2, 0.2, 1.2, 0.15 );
 	Material jade( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63), 
 			Colour(0.316228, 0.316228, 0.316228), 
-			12.8, 0.0, 1.0 );
+			12.8, 0.0, 1.0, 0.15 );
+	Material mirror( Colour(.5,.5,.5), Colour(0.5,0.5,0.5),
+			Colour(1.0,1.0,1.0),
+			10.0,0.0,1.0, .8);
 
 	// Defines a point light source.
 	raytracer.addLightSource( new PointLight(Point3D(0, 0, 5), 
@@ -431,26 +441,34 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
+	SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &mirror );
+	SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &mirror );
 	//SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &jade );
 	
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
-	raytracer.translate(sphere, Vector3D(0, 0, -5));
+	raytracer.translate(sphere, Vector3D(0, 0, -6));
 	//raytracer.translate(cylinder, Vector3D(0, 0, -3));	
-	raytracer.rotate(sphere, 'x', -45); 
 	raytracer.rotate(sphere, 'z', 45); 
 	raytracer.scale(sphere, Point3D(0, 0, 0), factor1);
 
-	raytracer.translate(plane, Vector3D(0, 0, -7));	
-	raytracer.rotate(plane, 'z', 45); 
+	raytracer.translate(plane, Vector3D(0, 0, -8));	
 	raytracer.scale(plane, Point3D(0, 0, 0), factor2);
+
+	raytracer.translate(plane2, Vector3D(0, -3, -6));	
+	raytracer.rotate(plane2, 'x', 90); 
+	raytracer.scale(plane2, Point3D(0, 0, 0), factor2);
+
+	raytracer.translate(plane3, Vector3D(-3, 0, -6));	
+	raytracer.rotate(plane3, 'y', 90); 
+	raytracer.scale(plane3, Point3D(0, 0, 0), factor2);
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
 	raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
 
-	//std::cout << "Here\n";
+	std::cout << "Rendering second view\n";
 	
 	// Render it from a different point of view.
 	Point3D eye2(4, 2, 1);
