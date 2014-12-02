@@ -17,11 +17,11 @@
 #include <iostream>
 #include <cstdlib>
 
-#define AA 0
+#define AA 1
 #define REFL 1
 
-#define MAX_REFLECT_BOUNCES 2
-#define MAX_REFRAC_BOUNCES 2
+#define MAX_REFLECT_BOUNCES 4
+#define MAX_REFRAC_BOUNCES 4
 #define MAX_GLOSSINESS_RAYS 8
 
 int randseed = 0;
@@ -270,7 +270,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	// anything.
 	if (!ray.intersection.none) {
 		computeShading(ray); 
-		col =  ray.col;
+		col =  1.1*ray.col;
 		
 		//For the glossiness
 		float random = 0.0;
@@ -282,7 +282,7 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			{
 				if( i == 0)
 				col = ((1-ray.intersection.mat->reflectiveness))*col;
-				random = ray.intersection.mat->glossiness * randomest_number()/85000.0;
+				random = ray.intersection.mat->glossiness * randomest_number()/50000.0;
 			}
 			else //don't shoot any glossiness rays because the material isn't glossy 
 				i = MAX_GLOSSINESS_RAYS;
@@ -295,10 +295,10 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 			reflection.reflect_bounce = ray.reflect_bounce + 1;
 			if(reflection.reflect_bounce <= MAX_REFLECT_BOUNCES) {
 				//TODO make this better
-				Colour colorReflect = ray.intersection.mat->reflectiveness*shadeRay(reflection);
+				Colour colorReflect = 1.1*ray.intersection.mat->reflectiveness*shadeRay(reflection);
 				colorReflect.clamp();
 				if(!ray.intersection.mat->glossiness)
-					col = ((1-ray.intersection.mat->reflectiveness)*col + colorReflect);	
+					col = ((1.-ray.intersection.mat->reflectiveness)*col + colorReflect);	
 				else
 				{
 					col[0] += (colorReflect)[0]/MAX_GLOSSINESS_RAYS;	
@@ -469,15 +469,22 @@ int main(int argc, char* argv[])
 	double fov = 60;
 
 	// Defines a material for shading.
-	Material gold( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648), 
-			Colour(0.628281, 0.555802, 0.366065), 
-			51.2, 0.2, 1.2, 0.15, 0.0 );
+	Material gold( Colour(0.3, 0.3, 0.3), Colour(0.9, 0.9, 0.9), 
+			Colour(0.628281, 0.655802, 0.666065), 
+			51.2, 0.85, 1.6, 0.9, 1.0 );
 	Material jade( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63), 
 			Colour(0.316228, 0.316228, 0.316228), 
-			12.8, 0.0, 1.0, 0.15, 1.0 );
+			12.8, 0.0, 1.0, 0.15, 0.0 );
 	Material mirror( Colour(.5,.5,.5), Colour(0.5,0.5,0.5),
 			Colour(1.0,1.0,1.0),
 			10.0,0.0,1.0, .8, 0.0);
+	
+	Material blue( Colour(.3, .3, .6), Colour(0.05, 0.05, 0.8), 
+			Colour(0.5, 0.5, 0.5), 
+			12.8, 0.0, 1.0, 0.15, 0.0 );
+	Material yellow( Colour(.3, .5, .5), Colour(0.24, 0.69, 0.63), 
+			Colour(0.416228, 0.416228, 0.416228), 
+			12.8, 0.0, 1.0, 0.15, 0.0 );
 
 	// Defines a point light source.
 	raytracer.addLightSource( new PointLight(Point3D(0, 0, 5), 
@@ -486,15 +493,17 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
-	SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &mirror );
-	SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &mirror );
+	SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &yellow );
+	SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &blue );
 	//SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &jade );
 	
 	// Apply some transformations to the unit square.
-	double factor1[3] = { 1.0, 2.0, 1.0 };
+	double factor1[3] = { 1.5, 1.5, 1.5 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
 	raytracer.translate(sphere, Vector3D(0, 0, -6));
 	//raytracer.translate(cylinder, Vector3D(0, 0, -3));	
+	
+	raytracer.rotate(sphere, 'x', 45); 
 	raytracer.rotate(sphere, 'z', 45); 
 	raytracer.scale(sphere, Point3D(0, 0, 0), factor1);
 
