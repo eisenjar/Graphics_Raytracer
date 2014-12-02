@@ -175,3 +175,35 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	}
 	else return false;
 }
+
+bool UnitCircle::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
+		const Matrix4x4& modelToWorld ) {
+
+	Vector3D normal(0,0,1);
+	
+	Point3D new_origin = worldToModel * ray.origin;
+	Vector3D new_dir = worldToModel * ray.dir;
+	
+	//backface cull; modify this if necessary
+	if(new_origin.m_data[2] * new_dir.m_data[2] > 0) return false;
+
+	double scale_factor = -new_origin.m_data[2]/new_dir.m_data[2];
+	Vector3D scaled_dir = scale_factor*new_dir;
+	Point3D POI = new_origin + scaled_dir;
+
+	if(std::sqrt(pow(POI.m_data[0],2)+pow(POI.m_data[1],2)) > 1) return false; //make sure it's not outside the bounds
+
+
+	if(ray.intersection.none == true || distance(ray.intersection.point, ray.origin) > distance(modelToWorld * POI, ray.origin)) {
+		ray.intersection.point = modelToWorld * POI;
+
+		ray.intersection.none = false;
+
+		ray.intersection.normal = transNorm(worldToModel,normal);
+		ray.intersection.normal.normalize();
+
+		return true;
+	}
+	else return false;
+
+}

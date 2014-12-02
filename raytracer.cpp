@@ -495,16 +495,17 @@ int main(int argc, char* argv[])
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
 	//SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &yellow );
 	//SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &blue );
-	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &yellow );
-	
+	SceneDagNode* circle = raytracer.addObject( new UnitCircle(), &blue );
+	SceneDagNode* circle2 = raytracer.addObject( new UnitCircle(), &blue );
+	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &blue);
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.5, 1.5, 1.5 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
 	//raytracer.translate(sphere, Vector3D(0, 0, -6));
 	raytracer.translate(cylinder, Vector3D(0, 0, -3));
-
-	raytracer.rotate(cylinder, 'y', 90);
-	raytracer.rotate(cylinder, 'x', 180);
+	raytracer.translate(circle, Vector3D(0, 0, -2.5));
+	raytracer.translate(circle2, Vector3D(0, 0, -3.5));
+	//raytracer.rotate(cylinder, 'x', 180);
 	
 	//raytracer.rotate(sphere, 'x', 45); 
 	//raytracer.rotate(sphere, 'z', 45); 
