@@ -190,6 +190,13 @@ void Raytracer::traverseScene( SceneDagNode* node, Ray3D& ray ) {
 		// Perform intersection.
 		if (node->obj->intersect(ray, _worldToModel, _modelToWorld)) {
 			ray.intersection.mat = node->mat;
+			if(node->obj->t_mapped)
+			{
+				//replace the colors of the material with those found in the texture map
+				Colour map_colour = node->obj->get_color(ray.intersection.untransformed);
+				ray.intersection.mat->ambient /*= ray.intersection.mat->diffuse = ray.intersection.mat->specular */= map_colour;
+				//std::cout << ray.intersection.mat->ambient << "\n\n";
+			}
 		}
 	}
 	// Traverse the children.
@@ -524,6 +531,20 @@ int main(int argc, char* argv[])
 	SceneDagNode* circle = raytracer.addObject( new UnitCircle(), &yellow );
 	SceneDagNode* circle2 = raytracer.addObject( new UnitCircle(), &yellow);
 	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &yellow);
+
+
+	plane->obj->rarray = new unsigned char *[5000]; plane->obj->garray = new unsigned char *[5000]; plane->obj->barray = new unsigned char *[5000];
+
+	plane->obj->t_mapped = true;
+
+	bmp_read("simple_texture.bmp", &(plane->obj->i_width), &(plane->obj->i_height), plane->obj->rarray, plane->obj->garray, plane->obj->barray);
+
+	//std::cout << (int)garray[0][300] << std::endl;
+
+	//for(int i = 0; i < i_height; i++) {
+		//for(int j = 0; j < 100000; j++) std::cout << "i: " << 0 << ", j: " << j << ", red: " << (int)garray[0][j] << std::endl;
+	//}
+
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.5, 1.5, 1.5 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
