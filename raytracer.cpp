@@ -502,9 +502,9 @@ int main(int argc, char* argv[])
 	Material red( Colour(.6, .1, .1), Colour(0.7, 0.1, 0.1), 
 			Colour(0.7, 0.6, 0.6), 
 			12.8, 0.0, 1.0, 0.5, 1.0 );
-	Material blue( Colour(.4, .4, .6), Colour(0.05, 0.05, 0.8), 
+	Material blue( Colour(.5, .5, .9), Colour(0.2, 0.2, 0.8), 
 			Colour(0.6, 0.6, 0.7), 
-			12.8, 0.0, 1.0, 0.15, 0.0 );
+			12.8, 0.0, 1.0, 0.15, 0.3 );
 	Material teal( Colour(.3, .5, .5), Colour(0.24, 0.69, 0.63), 
 			Colour(0.416228, 0.416228, 0.416228), 
 			12.8, 0.0, 1.0, 0.15, 0.0 );
@@ -516,8 +516,8 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &glass );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
-	SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &mirror );
-	SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &blue );
+	SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &blue );
+	SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &mirror );
 	SceneDagNode* circle = raytracer.addObject( new UnitCircle(), &red );
 	SceneDagNode* circle2 = raytracer.addObject( new UnitCircle(), &red);
 	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &red);
