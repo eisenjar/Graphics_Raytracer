@@ -17,14 +17,14 @@
 #include <iostream>
 #include <cstdlib>
 
-#define AA 1
+#define AA 0
 #define REFL 1
 #define DOF 1
 
-#define MAX_REFLECT_BOUNCES 4
-#define MAX_REFRAC_BOUNCES 4
-#define MAX_GLOSSINESS_RAYS 8
-#define NUM_FRAMES 2
+#define MAX_REFLECT_BOUNCES 2
+#define MAX_REFRAC_BOUNCES 2
+#define MAX_GLOSSINESS_RAYS 4
+#define NUM_FRAMES 1
 
 Point3D DOF_point = Point3D(-.1,-.1,-2);
 
@@ -507,9 +507,9 @@ int main(int argc, char* argv[])
 	Material red( Colour(.6, .1, .1), Colour(0.7, 0.1, 0.1), 
 			Colour(0.7, 0.6, 0.6), 
 			12.8, 0.0, 1.0, 0.0, 0.0 );
-	Material blue( Colour(.35, .35, .6), Colour(0.05, 0.05, 0.8), 
+	Material blue( Colour(.4, .4, .6), Colour(0.05, 0.05, 0.8), 
 			Colour(0.6, 0.6, 0.7), 
-			12.8, 0.0, 1.0, 0.15, 0.0 );
+			12.8, 0.0, 1.0, 0.15, 1.0 );
 	Material teal( Colour(.3, .5, .5), Colour(0.24, 0.69, 0.63), 
 			Colour(0.416228, 0.416228, 0.416228), 
 			12.8, 0.0, 1.0, 0.15, 0.0 );
@@ -538,9 +538,9 @@ int main(int argc, char* argv[])
 	raytracer.rotate(circle, 'y', 45);
 	raytracer.rotate(circle2, 'y', 45);
 	
-	raytracer.translate(cylinder, Vector3D(4, .5, -5.5));
-	raytracer.translate(circle, Vector3D(4, .5, -5));
-	raytracer.translate(circle2, Vector3D(4, .5, -6));
+	raytracer.translate(cylinder, Vector3D(5, 1, -5.5));
+	raytracer.translate(circle, Vector3D(5, 1, -5));
+	raytracer.translate(circle2, Vector3D(5, 1, -6));
 	raytracer.rotate(circle2, 'y', 180);
 
 	raytracer.rotate(sphere, 'x', 45); 
