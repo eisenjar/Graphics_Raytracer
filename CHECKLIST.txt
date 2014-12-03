@@ -2,8 +2,8 @@
 Assignment 3 Checklist/Grading sheet
 -------------------------------------
 
-Name: 
-Student ID:
+Name: Jared Eisen, Griffin Garland
+Student ID: 998212483, 998283673
 
 -----------------------------------------------------------------------------------------
 A. PLEASE ANSWER THE FOLLOWING QUESTIONS (your assignment will not be graded otherwise!)
@@ -20,7 +20,7 @@ A. PLEASE ANSWER THE FOLLOWING QUESTIONS (your assignment will not be graded oth
    (see http://www.cs.toronto.edu/~kyros/courses/418/policy.2010f.html for
     policy on assignments done in collaboration)
 
-   ___Yes   ___No
+   ___Yes   _X__No
 
    If you checked yes, please supply the following
 
@@ -39,16 +39,32 @@ B. PLACE AN (X) IN FRONT OF PORTIONS OF THE ASSIGNMENT THAT YOU COMPLETED IN FUL
    WE WILL BE ABLE TO MAKE AN ACCURATE ASSESSMENT
 
    
-___   (10 points) Part 1a     Ray casting
+_X__   (10 points) Part 1a     Ray casting
                   
-___   (20 points) Part 1b     Ray-sphere intersection
+_X__   (20 points) Part 1b     Ray-sphere intersection
 
-___   (15 points) Part 1c     Ray-square intersection
+_X__   (15 points) Part 1c     Ray-square intersection
 
-___   (15 points) Part 1d     Phong shading (ambient, diffuse, and specular components)
+_X__   (15 points) Part 1d     Phong shading (ambient, diffuse, and specular components)
                   
-___   ( 5 points) Part 1e     Coding style
+_X__   ( 5 points) Part 1e     Coding style
 
-___   (10 points) Part 1f     Written report
+_X__   (10 points) Part 1f     Written report
+
+
+Additional features for part 2:
+
+- Secondary Reflection with specularities and shadows
+
+- Ray-Cylinder intersection
+
+- Refraction
+
+- Texture Mapping
+
+- Motion Blur
+
+- Glossy Reflections
+
 
 -------------------------------------------------------------------------------- 
