@@ -194,7 +194,7 @@ void Raytracer::traverseScene( SceneDagNode* node, Ray3D& ray ) {
 			{
 				//replace the colors of the material with those found in the texture map
 				Colour map_colour = node->obj->get_color(ray.intersection.untransformed);
-				ray.intersection.mat->ambient /*= ray.intersection.mat->diffuse = ray.intersection.mat->specular */= map_colour;
+				ray.intersection.mat->diffuse /*= ray.intersection.mat->diffuse = ray.intersection.mat->specular */= map_colour;
 				//std::cout << ray.intersection.mat->ambient << "\n\n";
 			}
 		}
@@ -369,8 +369,8 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 	_scrWidth = width;
 	_scrHeight = height;
 	double factor = (double(height)/2)/tan(fov*M_PI/360.0);
-
-	initPixelBuffer();
+	if(frames_rendered == 1)
+		initPixelBuffer();
 	viewToWorld = initInvViewMatrix(eye, view, up);
 
 	//Sample 4 times per pixel for Anti Aliasing at (.25,25),(.25,.75),(.75,.25),(.75,.75)
@@ -442,9 +442,9 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 						place = TopLeft;
 						continueloop=false;
 						//Save result
-						_rbuffer[i*width+j] = int(col[0]*255)/NUM_FRAMES;
-						_gbuffer[i*width+j] = int(col[1]*255)/NUM_FRAMES;
-						_bbuffer[i*width+j] = int(col[2]*255)/NUM_FRAMES;
+						_rbuffer[i*width+j] += int(col[0]*255)/NUM_FRAMES;
+						_gbuffer[i*width+j] += int(col[1]*255)/NUM_FRAMES;
+						_bbuffer[i*width+j] += int(col[2]*255)/NUM_FRAMES;
 						break;
 					default:
 						std::cout << "what?" << std::endl;
@@ -453,9 +453,9 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 				#else
 				col = shadeRay(ray);
 				continueloop = false;
-				_rbuffer[i*width+j] = int(col[0]*255)/NUM_FRAMES;
-				_gbuffer[i*width+j] = int(col[1]*255)/NUM_FRAMES;
-				_bbuffer[i*width+j] = int(col[2]*255)/NUM_FRAMES;
+				_rbuffer[i*width+j] += int(col[0]*255)/NUM_FRAMES;
+				_gbuffer[i*width+j] += int(col[1]*255)/NUM_FRAMES;
+				_bbuffer[i*width+j] += int(col[2]*255)/NUM_FRAMES;
 				#endif
 			}
 		}
@@ -533,12 +533,7 @@ int main(int argc, char* argv[])
 	SceneDagNode* circle2 = raytracer.addObject( new UnitCircle(), &yellow);
 	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &yellow);
 
-
-	plane->obj->rarray = new unsigned char *[5000]; plane->obj->garray = new unsigned char *[5000]; plane->obj->barray = new unsigned char *[5000];
-
-	plane->obj->t_mapped = true;
-
-	bmp_read("simple_texture.bmp", &(plane->obj->i_width), &(plane->obj->i_height), plane->obj->rarray, plane->obj->garray, plane->obj->barray);
+	plane->obj->t_map("simple_texture.bmp");
 
 	//std::cout << (int)garray[0][300] << std::endl;
 
@@ -578,19 +573,19 @@ int main(int argc, char* argv[])
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
-	while(frames_rendered <= NUM_FRAMES)
+	/*while(frames_rendered <= NUM_FRAMES)
 	{
 		std::cout << "rendering frame" << std::endl;
 		raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
-		raytracer.translate(cylinder, Vector3D(0, 1, 0));
-		raytracer.translate(circle, Vector3D(0, 1, 0));
-		raytracer.translate(circle2, Vector3D(0, 1, 0));
+		raytracer.translate(cylinder, Vector3D(0, .1, 0));
+		raytracer.translate(circle, Vector3D(0, .1, 0));
+		raytracer.translate(circle2, Vector3D(0, .1, 0));
 	}
 
 
-	raytracer.translate(cylinder, Vector3D(0, -1*NUM_FRAMES, 0));
-	raytracer.translate(circle, Vector3D(0, -1*NUM_FRAMES, 0));
-	raytracer.translate(circle2, Vector3D(0, -1*NUM_FRAMES, 0));
+	raytracer.translate(cylinder, Vector3D(0, -.1*NUM_FRAMES, 0));
+	raytracer.translate(circle, Vector3D(0, -.1*NUM_FRAMES, 0));
+	raytracer.translate(circle2, Vector3D(0, -.1*NUM_FRAMES, 0));
 	
 	Point3D eye2(4, 2, 1);
 	Vector3D view2(-4, -2, -6);
@@ -601,10 +596,33 @@ int main(int argc, char* argv[])
 	{// Render it from a different point of view.
 		std::cout << "Rendering second frame\n";
 		raytracer.render(width, height, eye2, view2, up, fov, "view2.bmp");
-		raytracer.translate(cylinder, Vector3D(0, 1, 0));
-		raytracer.translate(circle, Vector3D(0, 1, 0));
-		raytracer.translate(circle2, Vector3D(0, 1, 0));
+		raytracer.translate(cylinder, Vector3D(0, .1, 0));
+		raytracer.translate(circle, Vector3D(0, .1, 0));
+		raytracer.translate(circle2, Vector3D(0, .1, 0)); 
 	}
+	
+	frames_rendered = 1;
+
+	raytracer.translate(cylinder, Vector3D(0, -.1*NUM_FRAMES, 0));
+	raytracer.translate(circle, Vector3D(0, -.1*NUM_FRAMES, 0));
+	raytracer.translate(circle2, Vector3D(0, -.1*NUM_FRAMES, 0));
+	*/
+
+
+	Point3D eye3(-1, 6, -2.5);
+	Vector3D view3(0, -1.5, -1);
+
+	while(frames_rendered <= NUM_FRAMES)
+	{
+
+		std::cout << "rendering third frame" << std::endl;
+		raytracer.render(width, height, eye3, view3, up, fov, "view3.bmp");
+		raytracer.translate(cylinder, Vector3D(0, .1, 0));
+		raytracer.translate(circle, Vector3D(0, .1, 0));
+		raytracer.translate(circle2, Vector3D(0, .1, 0));
+	}
+
+
 	return 0;
 }
 
