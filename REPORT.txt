@@ -8,14 +8,18 @@ Ray-square intersection - we computed where the ray intersected the xy plane, an
 
 Phong shading - we used the formulas described in class for ambient, diffuse and specular shading.  The material coefficients were taken from the object properties.
 
-Anti-aliasing - instead of shooting one ray per pixel, we shot four evenly spaced rays through each pixel
+Anti-aliasing - instead of shooting one ray per pixel, we shot four evenly spaced rays through each pixel half way inbeween the centre of the pixel and the corners (ie (.25,.75),(.25,.25) etc.). This gave good results and reduced the amount of aliasing without requiring a more performance intensive solution, such as shooting more rays, or using a pseudo random number generator to determine the sample location of the pixel.
 
 
 Part 2
 
 Secondary reflection with specularities -
 
-Shadows -
+Shadows - To determine shadows we shoot a ray directed at each light. If the ray doesn't hit an object between the light and the intersection, we assume that that intersection point is lit by that light (ie has a specular/diffuse light). If it is behind an object we assume that it is not shaded by that light. If the object being hit is partially transparent, we sample the color of the object based on the amount of light that would go through (as a function of the transparency value). We can't accurately display caustics using a simple raytracer, we would have to do something more advanced such as photon mapping. We also have no way to know if a transparent object in front of an intersection point has another object the light for it. So we assume all transparent objects cast shadows with refraction index = 1.
+
+Glossy reflections - If a material is demeed to be glossy it means the light reflecting off the material does not reflect at the exact angle of incidence. There is some random "glossy" factor that makes all rays that hit a glossy material bounce in random directions. We shoot more than 1 ray when we hit a glossy material to ensure that we don't sample incorrectly. We take the average of all the samples and use that to determine the gloss.
+
+Refraction - This was done using Snell's law equations, we assume that all rays originate in air (refractive index = 1) and based on the angle of incidence and the refractive index of the material being hit, we adjust the angle. We do the opposite when we find the normal points in the same direction of the array, as it's assumed that the ray is leaving the object.
 
 Texture Mapping - we saved bitmap images, and used the functions defined in bmp_io to read them.  We then created a mapping function from the object-space coordinates to coordinates in the picture, and used those to pick which pixel of the bitmap to use.  We then overwrote the diffuse material properties of the object with the computed ones.
 
