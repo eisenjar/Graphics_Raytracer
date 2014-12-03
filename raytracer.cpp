@@ -17,16 +17,13 @@
 #include <iostream>
 #include <cstdlib>
 
-#define AA 0
+#define AA 1
 #define REFL 1
-#define DOF 1
 
-#define MAX_REFLECT_BOUNCES 2
-#define MAX_REFRAC_BOUNCES 2
-#define MAX_GLOSSINESS_RAYS 4
+#define MAX_REFLECT_BOUNCES 4
+#define MAX_REFRAC_BOUNCES 4
+#define MAX_GLOSSINESS_RAYS 8
 #define NUM_FRAMES 1
-
-Point3D DOF_point = Point3D(-.1,-.1,-2);
 
 int frames_rendered = 1;
 
@@ -397,13 +394,11 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 				if(place == TopRight || place == BottomRight)
 					x = 1;
 			/*
+			 * couldn't get depth of field working
 				double rand_x = randomest_number()%5;
 				double rand_y = randomest_number()%5;
 
-		
-
 				double DOF_distance = distance(DOF_point,eye);
-
 				std::cout << rand_x << " " << rand_y << std::endl;
 			*/
 				
@@ -496,7 +491,7 @@ int main(int argc, char* argv[])
 	// Defines a material for shading.
 	Material glass( Colour(0.3, 0.3, 0.3), Colour(0.9, 0.9, 0.9), 
 			Colour(0.628281, 0.655802, 0.666065), 
-			51.2, 0.85, 1.6, 0.9, 1.0 );
+			51.2, 0.85, 1.6, 0.9, 0.0 );
 	Material jade( Colour(0.2, 0.2, 0.2), Colour(0.54, 0.89, 0.63), 
 			Colour(0.316228, 0.316228, 0.316228), 
 			12.8, 0.0, 1.0, 0.15, 0.0 );
@@ -506,10 +501,10 @@ int main(int argc, char* argv[])
 	
 	Material red( Colour(.6, .1, .1), Colour(0.7, 0.1, 0.1), 
 			Colour(0.7, 0.6, 0.6), 
-			12.8, 0.0, 1.0, 0.0, 0.0 );
+			12.8, 0.0, 1.0, 0.5, 1.0 );
 	Material blue( Colour(.4, .4, .6), Colour(0.05, 0.05, 0.8), 
 			Colour(0.6, 0.6, 0.7), 
-			12.8, 0.0, 1.0, 0.15, 1.0 );
+			12.8, 0.0, 1.0, 0.15, 0.0 );
 	Material teal( Colour(.3, .5, .5), Colour(0.24, 0.69, 0.63), 
 			Colour(0.416228, 0.416228, 0.416228), 
 			12.8, 0.0, 1.0, 0.15, 0.0 );

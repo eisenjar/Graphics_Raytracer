@@ -54,8 +54,6 @@ _X__   (10 points) Part 1f     Written report
 
 Additional features for part 2:
 
-- Secondary Reflection with specularities and shadows
-
 - Ray-Cylinder intersection
 
 - Refraction

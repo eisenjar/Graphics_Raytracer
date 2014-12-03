@@ -1,3 +1,8 @@
+Summary
+For our assignment 3, we did the advanced ray tracer with refraction, glossy reflection, motion blur, compound objects (cylinder), and texture mapping.
+In the saved bitmap files, the cube has the gloss in the final version, and the back wall has the gloss in the gloss/no_gloss versions. I found it took an unreal amount of time to get gloss to render, so only a few objects have gloss. I also added a few views where the cylinder has gloss.
+ 
+
 Part 1
 
 Ray casting - most of this was already taken care of for us.  We needed to transform the rays to world space and compute the direction.
@@ -26,3 +31,26 @@ Refraction - this was done using Snell's law equations, we assume that all rays 
 Texture Mapping - we saved bitmap images, and used the functions defined in bmp_io to read them.  We then created a mapping function from the object-space coordinates to coordinates in the picture, and used those to pick which pixel of the bitmap to use.  We then overwrote the diffuse material properties of the object with the computed ones.
 
 Ray-Cylinder intersection - we created and solved a quadratic equation for the intersection of a line and a cylinder.  If there were two intersections, we chose the closer one.  We also defined a circle intersection function to handle the circular faces.
+
+
+Directory Structure
+Since we did the advanced ray tracer, we essentially did exactly what was told to do in the comments of each function. For example refraction and reflection are done in shaderay, anti-aliasing is done in render.
+
+
+Parts completed by Each Partner
+
+Part 1:
+Both did it together in the lab.
+Griffin did AA, Jared did the sphere interesection alone.
+
+Part 2:
+Jared:
+Secondary reflections
+Texture Mapping
+Ray-Cylinder intersection
+
+Griffin:
+Shadows
+Refraction
+Motion Blur
+Glossy Reflections
