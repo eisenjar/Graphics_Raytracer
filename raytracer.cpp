@@ -546,9 +546,9 @@ int main(int argc, char* argv[])
 	double factor2[3] = { 6.0, 6.0, 6.0 };
 	raytracer.translate(sphere, Vector3D(-.5, -.5, -4));
 
-	raytracer.rotate(cylinder, 'y', 40);
-	raytracer.rotate(circle, 'y', 40);
-	raytracer.rotate(circle2, 'y', 40);
+	raytracer.rotate(cylinder, 'y', 45);
+	raytracer.rotate(circle, 'y', 45);
+	raytracer.rotate(circle2, 'y', 45);
 	
 	raytracer.translate(cylinder, Vector3D(4, .5, -5.5));
 	raytracer.translate(circle, Vector3D(4, .5, -5));
@@ -577,15 +577,15 @@ int main(int argc, char* argv[])
 	{
 		std::cout << "rendering frame" << std::endl;
 		raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
-		raytracer.translate(cylinder, Vector3D(0, .1, 0));
-		raytracer.translate(circle, Vector3D(0, .1, 0));
-		raytracer.translate(circle2, Vector3D(0, .1, 0));
+		raytracer.translate(cylinder, Vector3D(0, .15, 0));
+		raytracer.translate(circle, Vector3D(0, .15, 0));
+		raytracer.translate(circle2, Vector3D(0, .15, 0));
 	}
 
 
-	raytracer.translate(cylinder, Vector3D(0, -.1*NUM_FRAMES, 0));
-	raytracer.translate(circle, Vector3D(0, -.1*NUM_FRAMES, 0));
-	raytracer.translate(circle2, Vector3D(0, -.1*NUM_FRAMES, 0));
+	raytracer.translate(cylinder, Vector3D(0, -.15*NUM_FRAMES, 0));
+	raytracer.translate(circle, Vector3D(0, -.15*NUM_FRAMES, 0));
+	raytracer.translate(circle2, Vector3D(0, -.15*NUM_FRAMES, 0));
 	
 	Point3D eye2(4, 2, 1);
 	Vector3D view2(-4, -2, -6);
@@ -596,16 +596,16 @@ int main(int argc, char* argv[])
 	{// Render it from a different point of view.
 		std::cout << "Rendering second frame\n";
 		raytracer.render(width, height, eye2, view2, up, fov, "view2.bmp");
-		raytracer.translate(cylinder, Vector3D(0, .1, 0));
-		raytracer.translate(circle, Vector3D(0, .1, 0));
-		raytracer.translate(circle2, Vector3D(0, .1, 0)); 
+		raytracer.translate(cylinder, Vector3D(0, .15, 0));
+		raytracer.translate(circle, Vector3D(0, .15, 0));
+		raytracer.translate(circle2, Vector3D(0, .15, 0)); 
 	}
 	
 	frames_rendered = 1;
 
-	raytracer.translate(cylinder, Vector3D(0, -.1*NUM_FRAMES, 0));
-	raytracer.translate(circle, Vector3D(0, -.1*NUM_FRAMES, 0));
-	raytracer.translate(circle2, Vector3D(0, -.1*NUM_FRAMES, 0));
+	raytracer.translate(cylinder, Vector3D(0, -.15*NUM_FRAMES, 0));
+	raytracer.translate(circle, Vector3D(0, -.15*NUM_FRAMES, 0));
+	raytracer.translate(circle2, Vector3D(0, -.15*NUM_FRAMES, 0));
 	
 
 
@@ -617,9 +617,9 @@ int main(int argc, char* argv[])
 
 		std::cout << "rendering third frame" << std::endl;
 		raytracer.render(width, height, eye3, view3, up, fov, "view3.bmp");
-		raytracer.translate(cylinder, Vector3D(0, .1, 0));
-		raytracer.translate(circle, Vector3D(0, .1, 0));
-		raytracer.translate(circle2, Vector3D(0, .1, 0));
+		raytracer.translate(cylinder, Vector3D(0, .15, 0));
+		raytracer.translate(circle, Vector3D(0, .15, 0));
+		raytracer.translate(circle2, Vector3D(0, .15, 0));
 	}
 
 
