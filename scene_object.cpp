@@ -11,6 +11,7 @@
 #include <cmath>
 #include <iostream>
 #include "scene_object.h"
+#include "bmp_io.h"
 
 bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		const Matrix4x4& modelToWorld ) {
@@ -233,4 +234,11 @@ Colour UnitCylinder::get_color( Point3D intersection ) {
 Colour UnitCircle::get_color( Point3D intersection ) {
 	//placeholder
 	return Colour(1,0,0);
+}
+
+bool SceneObject::t_map(char *filename) {
+	this->rarray = new unsigned char *[5000]; this->garray = new unsigned char *[5000]; this->barray = new unsigned char *[5000];
+
+	if(!bmp_read(filename, &(this->i_width), &(this->i_height), this->rarray, this->garray, this->barray)) this->t_mapped = true;
+	return this->t_mapped;
 }

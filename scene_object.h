@@ -19,6 +19,9 @@ public:
 	// Returns true if an intersection occured, false otherwise.
 	virtual bool intersect( Ray3D&, const Matrix4x4&, const Matrix4x4& ) = 0;
 
+	//create a texture map for the object
+	bool t_map( char *filename );
+
 	//if the object has been texture mapped, get the color
 	virtual Colour get_color( Point3D intersection ) = 0;
 
@@ -46,6 +49,7 @@ public:
 	bool intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 			const Matrix4x4& modelToWorld );
 
+
 	Colour get_color( Point3D intersection );
 };
 
@@ -53,6 +57,7 @@ class UnitCylinder : public SceneObject {
 public:
 	bool intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 			const Matrix4x4& modelToWorld );
+
 
 	Colour get_color( Point3D intersection );
 };
