@@ -17,14 +17,14 @@
 #include <iostream>
 #include <cstdlib>
 
-#define AA 0
+#define AA 1
 #define REFL 1
 #define DOF 1
 
-#define MAX_REFLECT_BOUNCES 2
-#define MAX_REFRAC_BOUNCES 2
-#define MAX_GLOSSINESS_RAYS 4
-#define NUM_FRAMES 1
+#define MAX_REFLECT_BOUNCES 4
+#define MAX_REFRAC_BOUNCES 4
+#define MAX_GLOSSINESS_RAYS 8
+#define NUM_FRAMES 2
 
 Point3D DOF_point = Point3D(-.1,-.1,-2);
 
@@ -498,15 +498,15 @@ int main(int argc, char* argv[])
 	Material glass( Colour(0.3, 0.3, 0.3), Colour(0.9, 0.9, 0.9), 
 			Colour(0.628281, 0.655802, 0.666065), 
 			51.2, 0.85, 1.6, 0.9, 1.0 );
-	Material jade( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63), 
+	Material jade( Colour(.2, .2, .2), Colour(0.54, 0.89, 0.63), 
 			Colour(0.316228, 0.316228, 0.316228), 
 			12.8, 0.0, 1.0, 0.15, 0.0 );
 	Material mirror( Colour(.5,.5,.5), Colour(0.5,0.5,0.5),
 			Colour(1.0,1.0,1.0),
 			10.0,0.0,1.0, .8, 0.0);
 	
-	Material yellow( Colour(.6, .6, .1), Colour(0.6, 0.6, 0.1), 
-			Colour(0.6, 0.6, 0.4), 
+	Material red( Colour(.6, .1, .1), Colour(0.7, 0.1, 0.1), 
+			Colour(0.7, 0.6, 0.6), 
 			12.8, 0.0, 1.0, 0.0, 0.0 );
 	Material blue( Colour(.35, .35, .6), Colour(0.05, 0.05, 0.8), 
 			Colour(0.6, 0.6, 0.7), 
@@ -527,11 +527,11 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &glass );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
-	SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &teal );
+	SceneDagNode* plane2 = raytracer.addObject( new UnitSquare(), &mirror );
 	SceneDagNode* plane3 = raytracer.addObject( new UnitSquare(), &blue );
-	SceneDagNode* circle = raytracer.addObject( new UnitCircle(), &yellow );
-	SceneDagNode* circle2 = raytracer.addObject( new UnitCircle(), &yellow);
-	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &yellow);
+	SceneDagNode* circle = raytracer.addObject( new UnitCircle(), &red );
+	SceneDagNode* circle2 = raytracer.addObject( new UnitCircle(), &red);
+	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &red);
 
 	plane->obj->t_map("simple_texture.bmp");
 
@@ -544,7 +544,7 @@ int main(int argc, char* argv[])
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.5, 1.5, 1.5 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
-	raytracer.translate(sphere, Vector3D(-.5, -.5, -5));
+	raytracer.translate(sphere, Vector3D(-.5, -.5, -4));
 
 	raytracer.rotate(cylinder, 'y', 40);
 	raytracer.rotate(circle, 'y', 40);
@@ -560,7 +560,7 @@ int main(int argc, char* argv[])
 	raytracer.rotate(sphere, 'z', 45); 
 	raytracer.scale(sphere, Point3D(0, 0, 0), factor1);
 
-	raytracer.translate(plane, Vector3D(0, 0, -8));	
+	raytracer.translate(plane, Vector3D(0, 0, -8.9));	
 	raytracer.scale(plane, Point3D(0, 0, 0), factor2);
 
 	raytracer.translate(plane2, Vector3D(0, -3, -6));	
@@ -573,7 +573,7 @@ int main(int argc, char* argv[])
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
-	/*while(frames_rendered <= NUM_FRAMES)
+	while(frames_rendered <= NUM_FRAMES)
 	{
 		std::cout << "rendering frame" << std::endl;
 		raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
@@ -606,7 +606,7 @@ int main(int argc, char* argv[])
 	raytracer.translate(cylinder, Vector3D(0, -.1*NUM_FRAMES, 0));
 	raytracer.translate(circle, Vector3D(0, -.1*NUM_FRAMES, 0));
 	raytracer.translate(circle2, Vector3D(0, -.1*NUM_FRAMES, 0));
-	*/
+	
 
 
 	Point3D eye3(-1, 6, -2.5);
