@@ -542,7 +542,6 @@ int main(int argc, char* argv[])
 	raytracer.translate(circle, Vector3D(4, .5, -5));
 	raytracer.translate(circle2, Vector3D(4, .5, -6));
 	raytracer.rotate(circle2, 'y', 180);
-	raytracer.rotate(cylinder, 'x', 180);
 
 	raytracer.rotate(sphere, 'x', 45); 
 	raytracer.rotate(sphere, 'z', 45); 
